@@ -3,10 +3,14 @@ package com.emazon.emazonstockservice.domain.usecase;
 import com.emazon.emazonstockservice.domain.exceptions.CategorySaveException;
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.spi.ICategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.util.DomainsConstants;
+import com.emazon.emazonstockservice.domain.util.PaginationValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -69,5 +73,54 @@ class CategoryUsecaseTest {
 
         assertEquals(DomainsConstants.FAIL_SAVE_CATEGORY_MESSAGE, exception.getMessage());
     }
+
+    @Test
+    void testListCategories() {
+
+        int pageNo = 1;
+        int pageSize = 10;
+        String sortBy = "name";
+        String sortDirection = "asc";
+
+        CustomPage<Category> expectedPage = new CustomPage.Builder<Category>()
+                .content(new ArrayList<>())
+                .pageNumber(pageNo)
+                .pageSize(pageSize)
+                .totalElements(100L)
+                .totalPages(10)
+                .first(true)
+                .last(false)
+                .build();
+
+
+        when(categoryPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection))
+                .thenReturn(expectedPage);
+
+
+        CustomPage<Category> result = categoryUsecase.listCategories(pageNo, pageSize, sortBy, sortDirection);
+        assertEquals(expectedPage, result);
+        verify(categoryPersistencePort).findAll(pageNo, pageSize, sortBy, sortDirection);
+    }
+
+    @Test
+    void testListCategoriesWhenDatabaseError() {
+        int pageNo = 1;
+        int pageSize = 10;
+        String sortBy = "name";
+        String sortDirection = "asc";
+
+
+        when(categoryPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection))
+                .thenThrow(new RuntimeException("Database error"));
+
+
+        RuntimeException thrownException = assertThrows(RuntimeException.class, () -> {
+            categoryUsecase.listCategories(pageNo, pageSize, sortBy, sortDirection);
+        });
+
+        assertEquals("Database error", thrownException.getMessage());
+    }
+
+
 
 }

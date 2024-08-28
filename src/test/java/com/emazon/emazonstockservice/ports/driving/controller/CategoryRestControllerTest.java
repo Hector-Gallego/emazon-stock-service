@@ -4,6 +4,7 @@ import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.ports.driving.dto.request.CategoryRequestDto;
 import com.emazon.emazonstockservice.ports.driving.mapper.CategoryResponseMapper;
+import com.emazon.emazonstockservice.ports.driving.mapper.GenericListResponseMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,10 +14,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
 import static org.mockito.ArgumentMatchers.any;
-
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,20 +27,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CategoryRestControllerTest {
 
     @Autowired
-    private  MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Autowired
-    private  ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
-    private  ICategoryServicePort categoryServicePort;
+    private ICategoryServicePort categoryServicePort;
     @MockBean
     private CategoryResponseMapper categoryMapper;
 
-    private  CategoryRequestDto categoryRequestDto;
+    private CategoryRequestDto categoryRequestDto;
     private Category category;
 
-
+    @MockBean
+    private GenericListResponseMapper genericListResponseMapper;
 
 
     @BeforeEach
@@ -55,7 +59,7 @@ class CategoryRestControllerTest {
     @Test
     void saveCategory_shouldReturnCreatedStatus() throws Exception {
         // Mock del mapper y del servicio
-        Mockito.when(categoryMapper.toDto(any(CategoryRequestDto.class))).thenReturn(category);
+        when(categoryMapper.toDto(any(CategoryRequestDto.class))).thenReturn(category);
         Mockito.doNothing().when(categoryServicePort).saveCategory(any(Category.class));
 
         mockMvc.perform(post("/api/category/")
@@ -74,4 +78,17 @@ class CategoryRestControllerTest {
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void testListCategoriesWithoutParameters() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/category/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Bad Request"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("Required parameter 'pageNo' is not present."));
+    }
+
+
+
+
 }
