@@ -40,7 +40,7 @@ public class CategoryRestController {
         this.genericListResponseMapper = genericListResponseMapper;
     }
 
-    @Operation(summary = OpenApiConstants.OPENAPI_SUMMARY, description = OpenApiConstants.OPENAPI_DESCRIPTION)
+    @Operation(summary = OpenApiConstants.OPENAPI_CATEGORY_SUMMARY, description = OpenApiConstants.OPENAPI_CATEGORY_DESCRIPTION)
     @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201, description = OpenApiConstants.CATEGORY_CREATED)
     @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400, description = OpenApiConstants.INVALID_INPUT)
     @io.swagger.v3.oas.annotations.parameters.RequestBody(

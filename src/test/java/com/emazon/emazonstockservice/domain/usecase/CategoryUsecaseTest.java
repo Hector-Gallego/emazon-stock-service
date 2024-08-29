@@ -5,7 +5,6 @@ import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.spi.ICategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.util.DomainsConstants;
-import com.emazon.emazonstockservice.domain.util.PaginationValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -54,7 +53,7 @@ class CategoryUsecaseTest {
             categoryUsecase.saveCategory(category);
         });
 
-        assertEquals(DomainsConstants.getDuplicateNameFieldMessage(category.getName()), exception.getMessage());
+        assertEquals(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.CATEGORY_FIELDS.NAME.toString(),category.getName()), exception.getMessage());
     }
 
     @Test

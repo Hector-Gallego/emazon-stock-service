@@ -8,6 +8,7 @@ import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.util.DomainsConstants;
 import com.emazon.emazonstockservice.domain.util.FieldValidator;
 import com.emazon.emazonstockservice.domain.util.PaginationValidator;
+import com.emazon.emazonstockservice.ports.util.OpenApiConstants;
 
 
 public class CategoryUsecase implements ICategoryServicePort {
@@ -33,14 +34,10 @@ public class CategoryUsecase implements ICategoryServicePort {
         );
 
         if (categoryPersistencePort.existsByName(category.getName())) {
-            throw new CategorySaveException(DomainsConstants.getDuplicateNameFieldMessage(category.getName()));
+            throw new CategorySaveException(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.CATEGORY_FIELDS.NAME.toString(),category.getName()));
         }
+        categoryPersistencePort.saveCategory(category);
 
-        try {
-            categoryPersistencePort.saveCategory(category);
-        }catch (Exception exception){
-            throw new CategorySaveException(DomainsConstants.FAIL_SAVE_CATEGORY_MESSAGE);
-        }
     }
 
     @Override
