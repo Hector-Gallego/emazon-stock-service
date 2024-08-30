@@ -4,8 +4,10 @@ import com.emazon.emazonstockservice.domain.api.IBrandServicePort;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.domain.spi.IBrandPersistencePort;
+import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.util.DomainsConstants;
 import com.emazon.emazonstockservice.domain.util.FieldValidator;
+import com.emazon.emazonstockservice.domain.util.PaginationValidator;
 
 public class BrandUseCase implements IBrandServicePort {
 
@@ -33,6 +35,18 @@ public class BrandUseCase implements IBrandServicePort {
         }
 
         brandPersistencePort.saveBrand(brand);
+
+    }
+
+    @Override
+    public CustomPage<Brand> listBrands(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
+
+        Integer validatedPageNo = PaginationValidator.validatePageNo(pageNo);
+        Integer validatedPageSize = PaginationValidator.validatePageSize(pageSize);
+        String validatedSortBy = PaginationValidator.validateSortBy(sortBy);
+        String validatedSortDirection = PaginationValidator.validateSortDirection(sortDirection);
+
+        return  brandPersistencePort.findAll(validatedPageNo, validatedPageSize, validatedSortBy, validatedSortDirection);
 
     }
 

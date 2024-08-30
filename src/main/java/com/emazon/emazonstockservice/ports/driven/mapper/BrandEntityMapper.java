@@ -11,5 +11,6 @@ import org.mapstruct.ReportingPolicy;
 public interface BrandEntityMapper {
 
     BrandEntity toEntity (Brand brand);
+    Brand toDomain (BrandEntity brandEntity);
 
 }

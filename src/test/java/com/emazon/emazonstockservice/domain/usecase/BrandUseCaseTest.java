@@ -5,11 +5,14 @@ import com.emazon.emazonstockservice.domain.exceptions.FieldEmptyException;
 import com.emazon.emazonstockservice.domain.exceptions.FieldLimitExceededException;
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.domain.spi.IBrandPersistencePort;
+import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.util.DomainsConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -105,6 +108,52 @@ class BrandUseCaseTest {
         assertEquals(String.format(DomainsConstants.MAX_DESCRIPTION_LENGTH_MESSAGE, DomainsConstants.MAX_BRAND_DESCRIPTION_LENGTH), exception.getMessage());
     }
 
+    @Test
+    void testListBrands() {
+
+        int pageNo = 1;
+        int pageSize = 10;
+        String sortBy = "name";
+        String sortDirection = "asc";
+
+        CustomPage<Brand> expectedPage = new CustomPage.Builder<Brand>()
+                .content(new ArrayList<>())
+                .pageNumber(pageNo)
+                .pageSize(pageSize)
+                .totalElements(100L)
+                .totalPages(10)
+                .first(true)
+                .last(false)
+                .build();
+
+
+        when(brandPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection))
+                .thenReturn(expectedPage);
+
+
+        CustomPage<Brand> result = brandUseCase.listBrands(pageNo, pageSize, sortBy, sortDirection);
+        assertEquals(expectedPage, result);
+        verify(brandPersistencePort).findAll(pageNo, pageSize, sortBy, sortDirection);
+    }
+
+    @Test
+    void testListCategoriesWhenDatabaseError() {
+        int pageNo = 1;
+        int pageSize = 10;
+        String sortBy = "name";
+        String sortDirection = "asc";
+
+
+        when(brandPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection))
+                .thenThrow(new RuntimeException("Database error"));
+
+
+        RuntimeException thrownException = assertThrows(RuntimeException.class, () -> {
+            brandUseCase.listBrands(pageNo, pageSize, sortBy, sortDirection);
+        });
+
+        assertEquals("Database error", thrownException.getMessage());
+    }
 
 
 }
