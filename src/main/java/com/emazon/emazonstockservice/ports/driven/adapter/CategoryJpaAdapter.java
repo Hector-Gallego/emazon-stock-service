@@ -36,7 +36,7 @@ public class CategoryJpaAdapter implements ICategoryPersistencePort {
     }
 
     @Override
-    public CustomPage<Category> findAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
+    public CustomPage<Category> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
 
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(sortDirection)));
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);

@@ -19,7 +19,9 @@ public class FieldValidator {
         }
 
         if (name.length() > maxNameLength) {
-            throw new FieldLimitExceededException(DomainsConstants.MAX_NAME_LENGTH);
+            throw new FieldLimitExceededException(
+                    String.format(DomainsConstants.MAX_NAME_LENGTH_MESSAGE, maxNameLength)
+            );
         }
     }
 
@@ -33,7 +35,9 @@ public class FieldValidator {
         }
 
         if (description.length() > maxDescriptionLength) {
-            throw new FieldLimitExceededException(DomainsConstants.MAX_DESCRIPTION_LENGTH);
+            throw new FieldLimitExceededException(
+                    String.format(DomainsConstants.MAX_DESCRIPTION_LENGTH_MESSAGE, maxDescriptionLength)
+            );
         }
     }
 

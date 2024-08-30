@@ -4,12 +4,8 @@ package com.emazon.emazonstockservice.ports.driving.mapper;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.response.GenericListResponseDto;
 import org.mapstruct.Mapper;
-import org.mapstruct.ReportingPolicy;
 
-
-@Mapper(componentModel = "spring",
-        unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        unmappedSourcePolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring")
 public interface GenericListResponseMapper {
 
     /**

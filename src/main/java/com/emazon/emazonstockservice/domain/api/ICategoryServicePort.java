@@ -6,5 +6,5 @@ import com.emazon.emazonstockservice.domain.util.CustomPage;
 
 public interface ICategoryServicePort {
     void saveCategory(Category category);
-    CustomPage<Category> listCategories(int pageNo, int pageSize, String sortBy, String sortDirection);
+    CustomPage<Category> listCategories(Integer pageNo, Integer pageSize, String sortBy, String sortDirection);
 }

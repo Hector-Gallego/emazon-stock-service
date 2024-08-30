@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 public interface ICategoryPersistencePort {
     void saveCategory(Category category);
     boolean existsByName(String name);
-    CustomPage<Category> findAll(int pageNo, int pageSize, String sortBy, String sortDirection);
+    CustomPage<Category> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDirection);
 }

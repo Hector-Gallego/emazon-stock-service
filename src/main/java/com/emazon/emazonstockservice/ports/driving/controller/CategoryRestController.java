@@ -1,15 +1,16 @@
 package com.emazon.emazonstockservice.ports.driving.controller;
 
 
-
 import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.request.CategoryRequestDto;
+import com.emazon.emazonstockservice.ports.driving.dto.response.CustomApiResponse;
 import com.emazon.emazonstockservice.ports.driving.dto.response.GenericListResponseDto;
 import com.emazon.emazonstockservice.ports.driving.mapper.GenericListResponseMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.CategoryResponseMapper;
 import com.emazon.emazonstockservice.ports.util.OpenApiConstants;
+import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -51,14 +54,20 @@ public class CategoryRestController {
             )
     )
     @PostMapping("/")
-    public ResponseEntity<Void> saveCategory(@Validated @RequestBody CategoryRequestDto categoryRequestDto){
+    public ResponseEntity<CustomApiResponse<Void>> saveCategory(@Validated @RequestBody CategoryRequestDto categoryRequestDto) {
 
         Category category = categoryMapper.toDto(categoryRequestDto);
         categoryServicePort.saveCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        CustomApiResponse<Void> response = new CustomApiResponse<>(
+                HttpStatus.CREATED.value(),
+                PortsConstants.CATEGORY_CREATED_SUCCESSFULLY,
+                null,
+                LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
-
 
 
     @GetMapping("/")
@@ -72,17 +81,25 @@ public class CategoryRestController {
             @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500, description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
                     content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON))
     })
-    public ResponseEntity<GenericListResponseDto<Category>> listCategories(
+    public ResponseEntity<CustomApiResponse<GenericListResponseDto<Category>>> listCategories(
             @RequestParam int pageNo,
             @RequestParam int pageSize,
             @RequestParam String sortDirection,
-            @RequestParam String sortBy){
+            @RequestParam String sortBy) {
 
         CustomPage<Category> categoryPage = categoryServicePort
                 .listCategories(pageNo, pageSize, sortBy, sortDirection);
 
-        GenericListResponseDto<Category> responseDto = genericListResponseMapper.toDto(categoryPage);
-        return ResponseEntity.ok(responseDto);
+        GenericListResponseDto<Category> categoryList = genericListResponseMapper.toDto(categoryPage);
+
+        CustomApiResponse<GenericListResponseDto<Category>> response = new CustomApiResponse<>(
+                HttpStatus.OK.value(),
+                PortsConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
+                categoryList,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.ok(response);
     }
 
 

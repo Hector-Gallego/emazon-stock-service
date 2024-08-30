@@ -20,11 +20,11 @@ public class CategoryRequestDto {
 
     @NotNull(message = PortsConstants.NAME_CANNOT_BE_NULL)
     @NotBlank(message = PortsConstants.NAME_CANNOT_BE_EMPTY)
-    @Size(max = 50, message = PortsConstants.MAX_NAME_LENGTH)
+    @Size(max = PortsConstants.MAX_CATEGORY_NAME_LENGTH, message = PortsConstants.MAX_CATEGORY_NAME_LENGTH_MESSAGE)
     private String name;
 
     @NotNull(message = PortsConstants.DESCRIPTION_CANNOT_BE_NULL)
     @NotBlank(message = PortsConstants.DESCRIPTION_CANNOT_BE_EMPTY)
-    @Size(max = 90, message = PortsConstants.MAX_DESCRIPTION_LENGTH)
+    @Size(max = PortsConstants.MAX_CATEGORY_DESCRIPTION_LENGTH, message = PortsConstants.MAX_CATEGORY_DESCRIPTION_LENGTH_MESSAGE)
     private String description;
 }

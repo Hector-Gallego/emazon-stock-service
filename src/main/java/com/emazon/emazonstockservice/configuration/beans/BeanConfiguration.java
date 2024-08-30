@@ -6,7 +6,7 @@ import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
 import com.emazon.emazonstockservice.domain.spi.IBrandPersistencePort;
 import com.emazon.emazonstockservice.domain.spi.ICategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.usecase.BrandUseCase;
-import com.emazon.emazonstockservice.domain.usecase.CategoryUsecase;
+import com.emazon.emazonstockservice.domain.usecase.CategoryUseCase;
 import com.emazon.emazonstockservice.ports.driven.adapter.BrandJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.adapter.CategoryJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mapper.BrandEntityMapper;
@@ -39,7 +39,7 @@ public class BeanConfiguration {
     @Bean
     public ICategoryServicePort categoryServicePort(ICategoryPersistencePort categoryPersistencePort)
     {
-        return new CategoryUsecase(categoryPersistencePort);
+        return new CategoryUseCase(categoryPersistencePort);
     }
 
     @Bean

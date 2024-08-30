@@ -1,5 +1,6 @@
 package com.emazon.emazonstockservice.ports.driven.entity;
 
+import com.emazon.emazonstockservice.domain.util.DomainsConstants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,8 +21,8 @@ public class BrandEntity {
     private Long id;
 
 
-    @Column(unique = true, nullable = false, length = 50)
+    @Column(unique = true, nullable = false, length = DomainsConstants.MAX_BRAND_NAME_LENGTH)
     private String name;
-    @Column(nullable = false, length = 120)
+    @Column(nullable = false, length = DomainsConstants.MAX_BRAND_DESCRIPTION_LENGTH)
     private String description;
 }

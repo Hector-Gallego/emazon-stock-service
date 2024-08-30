@@ -1,10 +1,13 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
-import com.emazon.emazonstockservice.domain.exceptions.CategorySaveException;
+import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
+import com.emazon.emazonstockservice.domain.exceptions.FieldEmptyException;
+import com.emazon.emazonstockservice.domain.exceptions.FieldLimitExceededException;
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.spi.ICategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.util.DomainsConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,23 +17,27 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CategoryUsecaseTest {
+class CategoryUseCaseTest {
 
     private ICategoryPersistencePort categoryPersistencePort;
-    private CategoryUsecase categoryUsecase;
+    private CategoryUseCase categoryUsecase;
+    private Category category;
 
     @BeforeEach
     void setUp() {
         categoryPersistencePort = Mockito.mock(ICategoryPersistencePort.class);
-        categoryUsecase = new CategoryUsecase(categoryPersistencePort);
+        categoryUsecase = new CategoryUseCase(categoryPersistencePort);
+
+        category = new Category();
+        category.setName("Electronics");
+        category.setDescription("description");
+
+
     }
 
     @Test
     void saveCategory_ShouldSaveCategory_WhenCategoryNameIsUnique() {
         // Arrange
-        Category category = new Category();
-        category.setName("Electronics");
-
         when(categoryPersistencePort.existsByName(category.getName())).thenReturn(false);
 
         // Act
@@ -41,37 +48,63 @@ class CategoryUsecaseTest {
     }
 
     @Test
-    void saveCategory_ShouldThrowCategorySaveException_WhenCategoryNameIsNotUnique() {
+    void saveCategory_ShouldThrowDuplicateNameException_WhenCategoryNameIsNotUnique() {
         // Arrange
-        Category category = new Category();
-        category.setName("Electronics");
-
         when(categoryPersistencePort.existsByName(category.getName())).thenReturn(true);
 
         // Act & Assert
-        CategorySaveException exception = assertThrows(CategorySaveException.class, () -> {
+        DuplicateNameException exception = assertThrows(DuplicateNameException.class, () -> {
             categoryUsecase.saveCategory(category);
         });
 
-        assertEquals(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.CATEGORY_FIELDS.NAME.toString(),category.getName()), exception.getMessage());
+        assertEquals(DomainsConstants.getDuplicateNameFieldMessage(
+                        DomainsConstants.CATEGORY_FIELDS.NAME.toString(),
+                        category.getName()),
+                exception.getMessage());
+    }
+
+
+
+    @Test
+    void saveCategory_ShouldThrowValidationException_WhenNameOrDescriptionIsInvalid() {
+
+        category.setName("");
+        // Act & Assert
+        FieldEmptyException exception = assertThrows(FieldEmptyException.class, () -> {
+            categoryUsecase.saveCategory(category);
+        });
+
+        assertEquals(DomainsConstants.NAME_CANNOT_BE_EMPTY, exception.getMessage());
     }
 
     @Test
-    void saveCategory_ShouldThrowCategorySaveException_WhenPersistenceFails() {
-        // Arrange
-        Category category = new Category();
-        category.setName("Electronics");
+    void saveCategory_ShouldThrowFieldLimitExceededException_WhenCategoryNameExceedsLimit() {
 
-        when(categoryPersistencePort.existsByName(category.getName())).thenReturn(false);
-        doThrow(new RuntimeException("Database error")).when(categoryPersistencePort).saveCategory(any(Category.class));
+        category.setName(StringUtils.repeat('A', DomainsConstants.MAX_CATEGORY_NAME_LENGTH + 1));
+        category.setDescription("description");
 
         // Act & Assert
-        CategorySaveException exception = assertThrows(CategorySaveException.class, () -> {
+        FieldLimitExceededException exception = assertThrows(FieldLimitExceededException.class, () -> {
             categoryUsecase.saveCategory(category);
         });
 
-        assertEquals(DomainsConstants.FAIL_SAVE_CATEGORY_MESSAGE, exception.getMessage());
+        assertEquals(String.format(DomainsConstants.MAX_NAME_LENGTH_MESSAGE, DomainsConstants.MAX_CATEGORY_NAME_LENGTH), exception.getMessage());
     }
+
+    @Test
+    void saveCategory_ShouldThrowFieldLimitExceededException_WhenCategoryDescriptionExceedsLimit() {
+
+        category.setName("name");
+        category.setDescription(StringUtils.repeat('A',DomainsConstants.MAX_CATEGORY_DESCRIPTION_LENGTH + 1));
+
+        // Act & Assert
+        FieldLimitExceededException exception = assertThrows(FieldLimitExceededException.class, () -> {
+            categoryUsecase.saveCategory(category);
+        });
+
+        assertEquals(String.format(DomainsConstants.MAX_DESCRIPTION_LENGTH_MESSAGE, DomainsConstants.MAX_CATEGORY_DESCRIPTION_LENGTH), exception.getMessage());
+    }
+
 
     @Test
     void testListCategories() {
@@ -119,7 +152,6 @@ class CategoryUsecaseTest {
 
         assertEquals("Database error", thrownException.getMessage());
     }
-
 
 
 }

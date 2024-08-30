@@ -1,24 +1,24 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
 import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
-import com.emazon.emazonstockservice.domain.exceptions.CategorySaveException;
+import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.spi.ICategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.util.DomainsConstants;
 import com.emazon.emazonstockservice.domain.util.FieldValidator;
 import com.emazon.emazonstockservice.domain.util.PaginationValidator;
-import com.emazon.emazonstockservice.ports.util.OpenApiConstants;
 
 
-public class CategoryUsecase implements ICategoryServicePort {
+
+public class CategoryUseCase implements ICategoryServicePort {
 
     private static final int MAX_NAME_LENGTH = 50;
     private static final int MAX_DESCRIPTION_LENGTH = 90;
 
     private final ICategoryPersistencePort categoryPersistencePort;
 
-    public CategoryUsecase(ICategoryPersistencePort categoryPersistencePort) {
+    public CategoryUseCase(ICategoryPersistencePort categoryPersistencePort) {
         this.categoryPersistencePort = categoryPersistencePort;
     }
 
@@ -34,17 +34,18 @@ public class CategoryUsecase implements ICategoryServicePort {
         );
 
         if (categoryPersistencePort.existsByName(category.getName())) {
-            throw new CategorySaveException(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.CATEGORY_FIELDS.NAME.toString(),category.getName()));
+            throw new DuplicateNameException(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.CATEGORY_FIELDS.NAME.toString(),category.getName()));
         }
+
         categoryPersistencePort.saveCategory(category);
 
     }
 
     @Override
-    public CustomPage<Category> listCategories(int pageNo, int pageSize, String sortBy, String sortDirection) {
+    public CustomPage<Category> listCategories(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
 
-        int validatedPageNo = PaginationValidator.validatePageNo(pageNo);
-        int validatedPageSize = PaginationValidator.validatePageSize(pageSize);
+        Integer validatedPageNo = PaginationValidator.validatePageNo(pageNo);
+        Integer validatedPageSize = PaginationValidator.validatePageSize(pageSize);
         String validatedSortBy = PaginationValidator.validateSortBy(sortBy);
         String validatedSortDirection = PaginationValidator.validateSortDirection(sortDirection);
 

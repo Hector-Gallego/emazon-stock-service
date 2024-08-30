@@ -3,8 +3,10 @@ package com.emazon.emazonstockservice.ports.driving.controller;
 import com.emazon.emazonstockservice.domain.api.IBrandServicePort;
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.ports.driving.dto.request.BrandRequestDto;
+import com.emazon.emazonstockservice.ports.driving.dto.response.CustomApiResponse;
 import com.emazon.emazonstockservice.ports.driving.mapper.BrandResponseMapper;
 import com.emazon.emazonstockservice.ports.util.OpenApiConstants;
+import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/brand")
@@ -40,12 +44,18 @@ public class BrandRestController {
                     schema = @Schema(implementation = BrandRequestDto.class)
             )
     )
-    public ResponseEntity<Void> saveBrand(@Validated @RequestBody BrandRequestDto brandRequestDto){
+    public ResponseEntity<CustomApiResponse<Void>> saveBrand(@Validated @RequestBody BrandRequestDto brandRequestDto){
 
         Brand brand = brandResponseMapper.toDto(brandRequestDto);
         brandServicePort.saveBrand(brand);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        CustomApiResponse<Void> response = new CustomApiResponse<>(
+                HttpStatus.CREATED.value(),
+                PortsConstants.BRAND_CREATED_SUCCESSFULLY,
+                null,
+                LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
 

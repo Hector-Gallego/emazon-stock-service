@@ -1,7 +1,6 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
 import com.emazon.emazonstockservice.domain.api.IBrandServicePort;
-import com.emazon.emazonstockservice.domain.exceptions.BrandSaveException;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.domain.spi.IBrandPersistencePort;
