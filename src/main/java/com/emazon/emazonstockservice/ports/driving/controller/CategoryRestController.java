@@ -5,11 +5,13 @@ import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.request.CategoryRequestDto;
+import com.emazon.emazonstockservice.ports.driving.dto.response.CategoryResponseDto;
 import com.emazon.emazonstockservice.ports.driving.dto.response.CustomApiResponse;
 import com.emazon.emazonstockservice.ports.driving.dto.response.GenericListResponseDto;
-import com.emazon.emazonstockservice.ports.driving.mapper.GenericListResponseMapper;
+import com.emazon.emazonstockservice.ports.driving.mapper.CategoryRequestMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.CategoryResponseMapper;
 import com.emazon.emazonstockservice.ports.util.OpenApiConstants;
+import com.emazon.emazonstockservice.ports.driving.mapper.CustomPageMapper;
 import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,18 +32,19 @@ import java.time.LocalDateTime;
 public class CategoryRestController {
 
     private final ICategoryServicePort categoryServicePort;
-    private final CategoryResponseMapper categoryMapper;
-    private final GenericListResponseMapper genericListResponseMapper;
+    private final CategoryResponseMapper categoryResponseMapper;
 
-
-    public CategoryRestController(ICategoryServicePort categoryServicePort,
-                                  CategoryResponseMapper categoryMapper,
-                                  GenericListResponseMapper genericListResponseMapper) {
-
+    public CategoryRestController(ICategoryServicePort categoryServicePort, CategoryResponseMapper categoryResponseMapper, CategoryRequestMapper categoryRequestMapper) {
         this.categoryServicePort = categoryServicePort;
-        this.categoryMapper = categoryMapper;
-        this.genericListResponseMapper = genericListResponseMapper;
+        this.categoryResponseMapper = categoryResponseMapper;
+        this.categoryRequestMapper = categoryRequestMapper;
     }
+
+    private final CategoryRequestMapper categoryRequestMapper;
+
+
+
+
 
     @Operation(summary = OpenApiConstants.OPENAPI_CATEGORY_SUMMARY, description = OpenApiConstants.OPENAPI_CATEGORY_DESCRIPTION)
     @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201, description = OpenApiConstants.CATEGORY_CREATED)
@@ -56,7 +59,7 @@ public class CategoryRestController {
     @PostMapping("/")
     public ResponseEntity<CustomApiResponse<Void>> saveCategory(@Validated @RequestBody CategoryRequestDto categoryRequestDto) {
 
-        Category category = categoryMapper.toDto(categoryRequestDto);
+        Category category = categoryRequestMapper.toDomain(categoryRequestDto);
         categoryServicePort.saveCategory(category);
 
         CustomApiResponse<Void> response = new CustomApiResponse<>(
@@ -75,13 +78,13 @@ public class CategoryRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200, description = OpenApiConstants.OPEN_API_LIST_CATEGORIES_SUCCESS,
                     content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
-                            schema = @Schema(implementation = GenericListResponseDto.class))),
+                            schema = @Schema(implementation = CustomApiResponse.class))),
             @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400, description = OpenApiConstants.OPEN_API_INVALID_PARAMETERS,
                     content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON)),
             @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500, description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
                     content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON))
     })
-    public ResponseEntity<CustomApiResponse<GenericListResponseDto<Category>>> listCategories(
+    public ResponseEntity<CustomApiResponse<GenericListResponseDto<CategoryResponseDto>>> listCategories(
             @RequestParam int pageNo,
             @RequestParam int pageSize,
             @RequestParam String sortDirection,
@@ -90,15 +93,14 @@ public class CategoryRestController {
         CustomPage<Category> categoryPage = categoryServicePort
                 .listCategories(pageNo, pageSize, sortBy, sortDirection);
 
-        GenericListResponseDto<Category> categoryList = genericListResponseMapper.toDto(categoryPage);
+        GenericListResponseDto<CategoryResponseDto> categoryList = CustomPageMapper.convertToDto(categoryPage, categoryResponseMapper);
 
-        CustomApiResponse<GenericListResponseDto<Category>> response = new CustomApiResponse<>(
+        CustomApiResponse<GenericListResponseDto<CategoryResponseDto>> response = new CustomApiResponse<>(
                 HttpStatus.OK.value(),
                 PortsConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
                 categoryList,
                 LocalDateTime.now()
         );
-
         return ResponseEntity.ok(response);
     }
 

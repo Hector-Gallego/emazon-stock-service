@@ -10,14 +10,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Setter
 @Getter
-@Schema(description = "Custom API Response with metadata and data.")
 public class CustomApiResponse<T>{
-    @Schema
+
     private int statusCode;
-    @Schema
     private String message;
-    @Schema
     private T data;
-    @Schema
     private LocalDateTime timestamp;
 }

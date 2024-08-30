@@ -5,7 +5,6 @@ import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.ports.driving.dto.request.BrandRequestDto;
 import com.emazon.emazonstockservice.ports.driving.mapper.BrandRequestMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.BrandResponseMapper;
-import com.emazon.emazonstockservice.ports.driving.mapper.GenericListResponseMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,9 +38,6 @@ class BrandRestControllerTest {
 
     @MockBean
     private BrandRequestMapper brandRequestMapper;
-
-    @MockBean
-    private GenericListResponseMapper genericListResponseMapper;
 
     private BrandRequestDto brandRequestDto;
     private Brand brand;

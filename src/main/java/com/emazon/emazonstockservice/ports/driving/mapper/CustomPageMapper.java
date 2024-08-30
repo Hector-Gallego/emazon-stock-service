@@ -1,14 +1,12 @@
-package com.emazon.emazonstockservice.ports.util;
+package com.emazon.emazonstockservice.ports.driving.mapper;
 
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.response.GenericListResponseDto;
-import com.emazon.emazonstockservice.ports.driving.mapper.GenericMapper;
-
 import java.util.List;
 
-public class PageConverter {
+public class CustomPageMapper {
 
-    private PageConverter(){
+    private CustomPageMapper(){
         throw new IllegalStateException();
     }
 

@@ -3,8 +3,8 @@ package com.emazon.emazonstockservice.ports.driving.controller;
 import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.ports.driving.dto.request.CategoryRequestDto;
+import com.emazon.emazonstockservice.ports.driving.mapper.CategoryRequestMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.CategoryResponseMapper;
-import com.emazon.emazonstockservice.ports.driving.mapper.GenericListResponseMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,14 +35,13 @@ class CategoryRestControllerTest {
     @MockBean
     private ICategoryServicePort categoryServicePort;
     @MockBean
-    private CategoryResponseMapper categoryMapper;
+    private CategoryResponseMapper categoryResponseMapper;
+
+    @MockBean
+    private CategoryRequestMapper categoryRequestMapper;
 
     private CategoryRequestDto categoryRequestDto;
     private Category category;
-
-    @MockBean
-    private GenericListResponseMapper genericListResponseMapper;
-
 
     @BeforeEach
     void setUp() {
@@ -59,7 +58,7 @@ class CategoryRestControllerTest {
     @Test
     void saveCategory_shouldReturnCreatedStatus() throws Exception {
         // Mock del mapper y del servicio
-        when(categoryMapper.toDto(any(CategoryRequestDto.class))).thenReturn(category);
+        when(categoryRequestMapper.toDomain(any(CategoryRequestDto.class))).thenReturn(category);
         Mockito.doNothing().when(categoryServicePort).saveCategory(any(Category.class));
 
         mockMvc.perform(post("/api/category/")

@@ -9,7 +9,7 @@ import com.emazon.emazonstockservice.ports.driving.dto.response.CustomApiRespons
 import com.emazon.emazonstockservice.ports.driving.dto.response.GenericListResponseDto;
 import com.emazon.emazonstockservice.ports.driving.mapper.BrandRequestMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.BrandResponseMapper;
-import com.emazon.emazonstockservice.ports.util.PageConverter;
+import com.emazon.emazonstockservice.ports.driving.mapper.CustomPageMapper;
 import com.emazon.emazonstockservice.ports.util.OpenApiConstants;
 import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -89,7 +89,7 @@ public class BrandRestController {
         CustomPage<Brand> brandPage = brandServicePort
                 .listBrands(pageNo, pageSize, sortBy, sortDirection);
 
-        GenericListResponseDto<BrandResponseDto> brandList = PageConverter.convertToDto(brandPage, brandResponseMapper);
+        GenericListResponseDto<BrandResponseDto> brandList = CustomPageMapper.convertToDto(brandPage, brandResponseMapper);
 
         CustomApiResponse<GenericListResponseDto<BrandResponseDto>> response = new CustomApiResponse<>(
                 HttpStatus.OK.value(),
