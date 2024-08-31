@@ -4,10 +4,7 @@ import com.emazon.emazonstockservice.domain.api.IBrandServicePort;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.domain.spi.IBrandPersistencePort;
-import com.emazon.emazonstockservice.domain.util.CustomPage;
-import com.emazon.emazonstockservice.domain.util.DomainsConstants;
-import com.emazon.emazonstockservice.domain.util.FieldValidator;
-import com.emazon.emazonstockservice.domain.util.PaginationValidator;
+import com.emazon.emazonstockservice.domain.util.*;
 
 public class BrandUseCase implements IBrandServicePort {
 
@@ -31,7 +28,7 @@ public class BrandUseCase implements IBrandServicePort {
         );
 
         if (brandPersistencePort.existsByName(brand.getName())) {
-            throw new DuplicateNameException(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.BRAND_FIElDS.NAME.toString(), brand.getName()));
+            throw new DuplicateNameException(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.MODEL_NAMES.BRAND.toString(), brand.getName()));
         }
 
         brandPersistencePort.saveBrand(brand);
@@ -49,6 +46,9 @@ public class BrandUseCase implements IBrandServicePort {
         return  brandPersistencePort.findAll(validatedPageNo, validatedPageSize, validatedSortBy, validatedSortDirection);
 
     }
+
+
+
 
 
 }

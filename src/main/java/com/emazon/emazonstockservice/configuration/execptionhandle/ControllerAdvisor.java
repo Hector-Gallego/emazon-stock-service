@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -25,34 +25,19 @@ import java.util.List;
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(FieldLimitExceededException.class)
-    public ResponseEntity<ExceptionResponse> fieldLimitExceededException(Exception exception) {
-
-        return ResponseEntity.badRequest().body(new ExceptionResponse(
-                exception.getMessage(),
-                HttpStatus.BAD_REQUEST.toString(),
-                LocalDateTime.now()
-        ));
+    public ResponseEntity<ErrorResponse> handleFieldLimitExceededException(FieldLimitExceededException exception) {
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(FieldEmptyException.class)
-    public ResponseEntity<ExceptionResponse> fieldEmptyException(Exception exception) {
-
-        return ResponseEntity.badRequest().body(new ExceptionResponse(
-                exception.getMessage(),
-                HttpStatus.BAD_REQUEST.toString(),
-                LocalDateTime.now()
-        ));
+    public ResponseEntity<ErrorResponse> handleFieldEmptyException(FieldEmptyException exception) {
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DuplicateNameException.class)
-    public ResponseEntity<ExceptionResponse> dupliResponseResponseEntity(Exception exception) {
-        return ResponseEntity.badRequest().body(new ExceptionResponse(
-                exception.getMessage(),
-                HttpStatus.BAD_REQUEST.toString(),
-                LocalDateTime.now()
-        ));
+    public ResponseEntity<ErrorResponse> handleDuplicateNameException(DuplicateNameException exception) {
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
     }
-
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -68,14 +53,35 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
 
-
         ErrorResponse errorResponse = new ErrorResponse(
-                LocalDate.now(),
+                LocalDateTime.now(),
                 ConfigurationConstants.INVALID_FIELDS,
                 HttpStatus.BAD_REQUEST,
                 errorList
         );
         return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                "An unexpected error occurred: " + ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                Collections.emptyList()
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, HttpStatus status) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                status,
+                Collections.emptyList()
+        );
+        return new ResponseEntity<>(errorResponse, status);
     }
 }

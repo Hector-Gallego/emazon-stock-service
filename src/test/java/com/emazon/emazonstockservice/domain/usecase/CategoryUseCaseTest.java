@@ -5,153 +5,344 @@ import com.emazon.emazonstockservice.domain.exceptions.FieldEmptyException;
 import com.emazon.emazonstockservice.domain.exceptions.FieldLimitExceededException;
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.spi.ICategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.util.CategoryConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.util.DomainsConstants;
-import org.apache.commons.lang3.StringUtils;
-import org.junit.jupiter.api.BeforeEach;
+import com.emazon.emazonstockservice.domain.util.PaginationValidator;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
+@ExtendWith(MockitoExtension.class)
 class CategoryUseCaseTest {
 
+
+    @Mock
     private ICategoryPersistencePort categoryPersistencePort;
-    private CategoryUseCase categoryUsecase;
-    private Category category;
 
-    @BeforeEach
-    void setUp() {
-        categoryPersistencePort = Mockito.mock(ICategoryPersistencePort.class);
-        categoryUsecase = new CategoryUseCase(categoryPersistencePort);
+    @InjectMocks
+    private CategoryUseCase categoryUseCase;
 
-        category = new Category();
-        category.setName("Electronics");
-        category.setDescription("description");
-
-
-    }
+    
 
     @Test
-    void saveCategory_ShouldSaveCategory_WhenCategoryNameIsUnique() {
-        // Arrange
-        when(categoryPersistencePort.existsByName(category.getName())).thenReturn(false);
+    void ShouldSaveCategoryWhenItDoesNotExist() {
 
-        // Act
-        categoryUsecase.saveCategory(category);
+        //given
+        Category category = new Category(1L, "category_1", "description_1");
 
-        // Assert
+        //when
+        when(categoryPersistencePort.existsByName("category_1")).thenReturn(false);
+
+        //act
+        categoryUseCase.saveCategory(category);
+
+        //then
         verify(categoryPersistencePort, times(1)).saveCategory(category);
+
     }
 
     @Test
-    void saveCategory_ShouldThrowDuplicateNameException_WhenCategoryNameIsNotUnique() {
-        // Arrange
-        when(categoryPersistencePort.existsByName(category.getName())).thenReturn(true);
+    void ShouldThrowExceptionWhenCategoryNameAlreadyExists() {
 
-        // Act & Assert
+        //given
+        Category category = new Category(1L, "category_1", "description_1");
+
+        //when
+        when(categoryPersistencePort.existsByName("category_1")).thenReturn(true);
+
+        //then
         DuplicateNameException exception = assertThrows(DuplicateNameException.class, () -> {
-            categoryUsecase.saveCategory(category);
+            categoryUseCase.saveCategory(category);
         });
 
-        assertEquals(DomainsConstants.getDuplicateNameFieldMessage(
-                        DomainsConstants.CATEGORY_FIELDS.NAME.toString(),
+
+        assertEquals(DomainsConstants.
+                getDuplicateNameFieldMessage(
+                        DomainsConstants.MODEL_NAMES.CATEGORY.toString(),
                         category.getName()),
                 exception.getMessage());
+
+        verify(categoryPersistencePort, times(0)).saveCategory(category);
+
+    }
+
+    @Test
+    void ShouldThrowExceptionWhenNameExceedsMaxLength() {
+
+        //given
+        Category category = new Category(
+                1L,
+                "a".repeat(CategoryConstants.MAX_CATEGORY_NAME_LENGTH + 1),
+                "description_1");
+
+        //then
+        FieldLimitExceededException exception = assertThrows(FieldLimitExceededException.class, () -> {
+            categoryUseCase.saveCategory(category);
+        });
+
+        assertEquals( String.format(
+                DomainsConstants.MAX_NAME_LENGTH_MESSAGE,
+                CategoryConstants.MAX_CATEGORY_NAME_LENGTH), exception.getMessage());
+
+
+        verify(categoryPersistencePort, times(0)).saveCategory(category);
+
     }
 
 
-
     @Test
-    void saveCategory_ShouldThrowValidationException_WhenNameOrDescriptionIsInvalid() {
+    void ShouldThrowExceptionWhenNameIsEmpty() {
 
-        category.setName("");
-        // Act & Assert
+        //given
+        Category category = new Category(
+                1L,
+                "",
+                "description_1");
+
+        //then
         FieldEmptyException exception = assertThrows(FieldEmptyException.class, () -> {
-            categoryUsecase.saveCategory(category);
+            categoryUseCase.saveCategory(category);
         });
 
         assertEquals(DomainsConstants.NAME_CANNOT_BE_EMPTY, exception.getMessage());
+
+        verify(categoryPersistencePort, times(0)).saveCategory(category);
+
     }
 
     @Test
-    void saveCategory_ShouldThrowFieldLimitExceededException_WhenCategoryNameExceedsLimit() {
+    void ShouldThrowExceptionWhenDescriptionIsEmpty() {
 
-        category.setName(StringUtils.repeat('A', DomainsConstants.MAX_CATEGORY_NAME_LENGTH + 1));
-        category.setDescription("description");
+        //given
+        Category category = new Category(
+                1L,
+                "name_1",
+                "");
 
-        // Act & Assert
-        FieldLimitExceededException exception = assertThrows(FieldLimitExceededException.class, () -> {
-            categoryUsecase.saveCategory(category);
+        //then
+        FieldEmptyException exception = assertThrows(FieldEmptyException.class, () -> {
+            categoryUseCase.saveCategory(category);
         });
 
-        assertEquals(String.format(DomainsConstants.MAX_NAME_LENGTH_MESSAGE, DomainsConstants.MAX_CATEGORY_NAME_LENGTH), exception.getMessage());
-    }
+        assertEquals(DomainsConstants.DESCRIPTION_CANNOT_BE_EMPTY, exception.getMessage());
 
-    @Test
-    void saveCategory_ShouldThrowFieldLimitExceededException_WhenCategoryDescriptionExceedsLimit() {
+        verify(categoryPersistencePort, times(0)).saveCategory(category);
 
-        category.setName("name");
-        category.setDescription(StringUtils.repeat('A',DomainsConstants.MAX_CATEGORY_DESCRIPTION_LENGTH + 1));
-
-        // Act & Assert
-        FieldLimitExceededException exception = assertThrows(FieldLimitExceededException.class, () -> {
-            categoryUsecase.saveCategory(category);
-        });
-
-        assertEquals(String.format(DomainsConstants.MAX_DESCRIPTION_LENGTH_MESSAGE, DomainsConstants.MAX_CATEGORY_DESCRIPTION_LENGTH), exception.getMessage());
     }
 
 
     @Test
-    void testListCategories() {
+    void ShouldThrowExceptionWhenDescriptionExceedsMaxLength() {
 
-        int pageNo = 1;
-        int pageSize = 10;
+        //given
+        Category category = new Category(
+                1L,
+                "name_1",
+                "a".repeat(CategoryConstants.MAX_CATEGORY_DESCRIPTION_LENGTH + 1));
+
+        //then
+        FieldLimitExceededException exception = assertThrows(
+                FieldLimitExceededException.class, () -> {
+                    categoryUseCase.saveCategory(category);
+                });
+
+        assertEquals(String.format(
+                DomainsConstants.MAX_DESCRIPTION_LENGTH_MESSAGE,
+                CategoryConstants.MAX_CATEGORY_DESCRIPTION_LENGTH), exception.getMessage());
+
+
+        verify(categoryPersistencePort, times(0)).saveCategory(category);
+
+    }
+
+
+
+
+
+
+    @Test
+    void ShouldReturnCategoryWhenParametersAreValid() {
+
+        // given
+        Integer pageNo = 1;
+        Integer pageSize = 10;
         String sortBy = "name";
         String sortDirection = "asc";
 
-        CustomPage<Category> expectedPage = new CustomPage.Builder<Category>()
+        CustomPage<Category> customPage = new CustomPage.Builder<Category>()
                 .content(new ArrayList<>())
-                .pageNumber(pageNo)
-                .pageSize(pageSize)
-                .totalElements(100L)
-                .totalPages(10)
+                .pageNumber(1)
+                .pageSize(10)
+                .totalElements(5L)
+                .totalPages(5)
                 .first(true)
                 .last(false)
                 .build();
 
 
-        when(categoryPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection))
-                .thenReturn(expectedPage);
+        // when
+        when(categoryPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection)).thenReturn(customPage);
 
+        //act
+        CustomPage<Category> result = categoryUseCase.listCategories(pageNo, pageSize, sortBy, sortDirection);
 
-        CustomPage<Category> result = categoryUsecase.listCategories(pageNo, pageSize, sortBy, sortDirection);
-        assertEquals(expectedPage, result);
-        verify(categoryPersistencePort).findAll(pageNo, pageSize, sortBy, sortDirection);
+        // then
+        assertEquals(customPage, result);
+        verify(categoryPersistencePort, times(1)).findAll(pageNo, pageSize, sortBy, sortDirection);
     }
 
     @Test
-    void testListCategoriesWhenDatabaseError() {
-        int pageNo = 1;
-        int pageSize = 10;
+    void ShouldReturnCategoriesWhenParametersAreInvalid() {
+        // given
+        Integer pageNo = null;
+        Integer pageSize = -1;
+        String sortBy = "";
+        String sortDirection = "ascendente";
+
+        CustomPage<Category> customPage = new CustomPage.Builder<Category>()
+                .content(Collections.singletonList(new Category(1L, "category_1", "description_1")))
+                .pageNumber(PaginationValidator.DEFAULT_PAGE_NO)
+                .pageSize(PaginationValidator.DEFAULT_PAGE_SIZE)
+                .totalElements(1L)
+                .totalPages(1)
+                .first(true)
+                .last(true)
+                .build();
+
+        when(categoryPersistencePort.findAll(
+                PaginationValidator.DEFAULT_PAGE_NO,
+                PaginationValidator.DEFAULT_PAGE_SIZE,
+                PaginationValidator.DEFAULT_SORT_BY,
+                PaginationValidator.DEFAULT_SORT_DIRECTION
+        )).thenReturn(customPage);
+
+        // act
+        CustomPage<Category> result = categoryUseCase.listCategories(pageNo, pageSize, sortBy, sortDirection);
+
+        // then
+        assertEquals(customPage, result);
+
+        verify(categoryPersistencePort, times(1)).findAll(
+                PaginationValidator.DEFAULT_PAGE_NO,
+                PaginationValidator.DEFAULT_PAGE_SIZE,
+                PaginationValidator.DEFAULT_SORT_BY,
+                PaginationValidator.DEFAULT_SORT_DIRECTION
+        );
+    }
+
+
+    @Test
+    void ShouldReturnCategoriesInAscendingOrder() {
+        // given
+        Integer pageNo = 0;
+        Integer pageSize = 10;
         String sortBy = "name";
         String sortDirection = "asc";
 
 
-        when(categoryPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection))
-                .thenThrow(new RuntimeException("Database error"));
+        List<Category> categories = Arrays.asList(
+                new Category(1L, "A_Category", "description_1"),
+                new Category(2L, "B_Category", "description_2"),
+                new Category(3L, "C_Category", "description_3")
+        );
+
+        CustomPage<Category> customPage = new CustomPage.Builder<Category>()
+                .content(categories)
+                .pageNumber(pageNo)
+                .pageSize(pageSize)
+                .totalElements((long) categories.size())
+                .totalPages(1)
+                .first(true)
+                .last(true)
+                .build();
+
+        when(categoryPersistencePort.findAll(
+                pageNo,
+                pageSize,
+                sortBy,
+                sortDirection
+        )).thenReturn(customPage);
+
+        // act
+        CustomPage<Category> result = categoryUseCase.listCategories(pageNo, pageSize, sortBy, sortDirection);
+
+        // then
+        assertEquals(customPage, result);
+
+        verify(categoryPersistencePort, times(1)).findAll(
+                pageNo,
+                pageSize,
+                sortBy,
+                sortDirection
+        );
 
 
-        RuntimeException thrownException = assertThrows(RuntimeException.class, () -> {
-            categoryUsecase.listCategories(pageNo, pageSize, sortBy, sortDirection);
-        });
-
-        assertEquals("Database error", thrownException.getMessage());
     }
+
+
+
+    @Test
+    void ShouldReturnCategoriesInDescendingOrder() {
+        // given
+        Integer pageNo = 0;
+        Integer pageSize = 10;
+        String sortBy = "name";
+        String sortDirection = "desc";
+
+
+        List<Category> categories = Arrays.asList(
+                new Category(1L, "C_Category", "description_1"),
+                new Category(2L, "B_Category", "description_2"),
+                new Category(3L, "A_Category", "description_3")
+        );
+
+        CustomPage<Category> customPage = new CustomPage.Builder<Category>()
+                .content(categories)
+                .pageNumber(pageNo)
+                .pageSize(pageSize)
+                .totalElements((long) categories.size())
+                .totalPages(1)
+                .first(true)
+                .last(true)
+                .build();
+
+        when(categoryPersistencePort.findAll(
+                pageNo,
+                pageSize,
+                sortBy,
+                sortDirection
+        )).thenReturn(customPage);
+
+        // act
+        CustomPage<Category> result = categoryUseCase.listCategories(pageNo, pageSize, sortBy, sortDirection);
+
+        // then
+        assertEquals(customPage, result);
+
+        verify(categoryPersistencePort, times(1)).findAll(
+                pageNo,
+                pageSize,
+                sortBy,
+                sortDirection
+        );
+
+
+    }
+
+
+
 
 
 }

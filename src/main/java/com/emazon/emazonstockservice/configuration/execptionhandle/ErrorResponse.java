@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 public class ErrorResponse {
 
-    private LocalDate timestamp;
+    private LocalDateTime timestamp;
     private String message;
     private HttpStatus status;
     private List<String> errors;

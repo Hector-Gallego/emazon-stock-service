@@ -90,6 +90,9 @@ public class CategoryRestController {
             @RequestParam String sortDirection,
             @RequestParam String sortBy) {
 
+
+
+
         CustomPage<Category> categoryPage = categoryServicePort
                 .listCategories(pageNo, pageSize, sortBy, sortDirection);
 

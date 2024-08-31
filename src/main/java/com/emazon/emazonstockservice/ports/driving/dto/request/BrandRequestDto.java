@@ -1,5 +1,6 @@
 package com.emazon.emazonstockservice.ports.driving.dto.request;
 
+import com.emazon.emazonstockservice.domain.util.BrandConstants;
 import com.emazon.emazonstockservice.domain.util.DomainsConstants;
 import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +25,6 @@ public class BrandRequestDto {
 
     @NotNull(message = DomainsConstants.DESCRIPTION_CANNOT_BE_NULL)
     @NotBlank(message = DomainsConstants.DESCRIPTION_CANNOT_BE_EMPTY)
-    @Size(max = DomainsConstants.MAX_BRAND_DESCRIPTION_LENGTH, message = PortsConstants.MAX_BRAND_DESCRIPTION_LENGTH_MESSAGE)
+    @Size(max = BrandConstants.MAX_BRAND_DESCRIPTION_LENGTH, message = PortsConstants.MAX_BRAND_DESCRIPTION_LENGTH_MESSAGE)
     private String description;
 }

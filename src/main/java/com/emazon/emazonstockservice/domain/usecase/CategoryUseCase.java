@@ -34,7 +34,7 @@ public class CategoryUseCase implements ICategoryServicePort {
         );
 
         if (categoryPersistencePort.existsByName(category.getName())) {
-            throw new DuplicateNameException(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.CATEGORY_FIELDS.NAME.toString(),category.getName()));
+            throw new DuplicateNameException(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.MODEL_NAMES.CATEGORY.toString(),category.getName()));
         }
 
         categoryPersistencePort.saveCategory(category);
