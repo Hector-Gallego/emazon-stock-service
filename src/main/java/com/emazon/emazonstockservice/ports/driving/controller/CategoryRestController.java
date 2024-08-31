@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.validation.annotation.Validated;
@@ -63,7 +64,7 @@ public class CategoryRestController {
         categoryServicePort.saveCategory(category);
 
         CustomApiResponse<Void> response = new CustomApiResponse<>(
-                HttpStatus.CREATED.value(),
+                HttpStatus.CREATED,
                 PortsConstants.CATEGORY_CREATED_SUCCESSFULLY,
                 null,
                 LocalDateTime.now());
@@ -99,12 +100,12 @@ public class CategoryRestController {
         GenericListResponseDto<CategoryResponseDto> categoryList = CustomPageMapper.convertToDto(categoryPage, categoryResponseMapper);
 
         CustomApiResponse<GenericListResponseDto<CategoryResponseDto>> response = new CustomApiResponse<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 PortsConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
                 categoryList,
                 LocalDateTime.now()
         );
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 

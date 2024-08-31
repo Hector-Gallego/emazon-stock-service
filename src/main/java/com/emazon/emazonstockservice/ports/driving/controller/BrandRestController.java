@@ -60,7 +60,7 @@ public class BrandRestController {
         brandServicePort.saveBrand(brand);
 
         CustomApiResponse<Void> response = new CustomApiResponse<>(
-                HttpStatus.CREATED.value(),
+                HttpStatus.CREATED,
                 PortsConstants.BRAND_CREATED_SUCCESSFULLY,
                 null,
                 LocalDateTime.now());
@@ -92,13 +92,13 @@ public class BrandRestController {
         GenericListResponseDto<BrandResponseDto> brandList = CustomPageMapper.convertToDto(brandPage, brandResponseMapper);
 
         CustomApiResponse<GenericListResponseDto<BrandResponseDto>> response = new CustomApiResponse<>(
-                HttpStatus.OK.value(),
+                HttpStatus.OK,
                 PortsConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
                 brandList,
                 LocalDateTime.now()
         );
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
