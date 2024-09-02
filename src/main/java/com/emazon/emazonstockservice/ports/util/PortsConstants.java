@@ -6,7 +6,18 @@ public class PortsConstants {
     public static final String  CATEGORIES_RETRIEVED_SUCCESSFULLY ="Categories retrieved successfully";
 
     public static final String BRAND_CREATED_SUCCESSFULLY = "Brand created successfully";
-    public static final String  BRANDS_RETRIEVED_SUCCESSFULLY ="Brands retrieved successfully";
+    public static final String ARTICLE_CREATED_SUCCESSFULLY = "Article created successfully";
+    public static final String QUANTITY_CANNOT_BE_NULL = "Quantity cannot be null";
+    public static final String QUANTITY_MUST_BE_POSITIVE_OR_ZERO = "Quantity must be zero or a positive number";
+    public static final String PRICE_CANNOT_BE_NULL = "Price cannot be null";
+    public static final String PRICE_MUST_BE_POSITIVE_OR_ZERO = "Price must be zero or a positive number";
+
+    // Constants for 'categoryIds' field validation
+    public static final String CATEGORY_IDS_CANNOT_BE_NULL = "Category IDs cannot be null";
+    public static final String CATEGORY_IDS_CANNOT_BE_EMPTY = "Category IDs cannot be empty";
+
+    // Constants for 'brandId' field validation
+    public static final String BRAND_ID_CANNOT_BE_NULL = "Brand ID cannot be null";
 
     private PortsConstants(){
         throw new IllegalStateException();

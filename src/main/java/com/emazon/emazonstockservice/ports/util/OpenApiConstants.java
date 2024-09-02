@@ -31,6 +31,15 @@ public final class OpenApiConstants {
 
 
 
+    public static final String OPENAPI_ARTICLE_SUMMARY = "Create a new category";
+    public static final String OPENAPI_ARTICLE_DESCRIPTION = "Creates a new category with the provided details";
+
+    public static final String ARTICLE_DATA = "Article Data";
+    public static final String ARTICLE_CREATED = "Article created successfully";
+
+
+
+
 
     public static final String OPENAPI_SUMMARY_LIST_CATEGORIES= "List Categories";
     public static final String OPENAPI_DESCRIPTION_LIST_CATEGORIES = "Creates a new category with the provided details";

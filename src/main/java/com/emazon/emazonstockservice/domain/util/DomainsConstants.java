@@ -4,7 +4,8 @@ public final class DomainsConstants {
 
     public enum MODEL_NAMES{
         CATEGORY,
-        BRAND
+        BRAND,
+        ARTICLE
     }
 
 

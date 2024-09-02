@@ -67,7 +67,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
         ErrorResponse errorResponse = new ErrorResponse(
                 LocalDateTime.now(),
-                "An unexpected error occurred: " + ex.getMessage(),
+                ex.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 Collections.emptyList()
         );
