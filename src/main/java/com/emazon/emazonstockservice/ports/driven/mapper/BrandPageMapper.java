@@ -1,10 +1,8 @@
 package com.emazon.emazonstockservice.ports.driven.mapper;
 
 import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driven.entity.BrandEntity;
-import com.emazon.emazonstockservice.ports.driven.entity.CategoryEntity;
 import org.springframework.data.domain.Page;
 
 public class BrandPageMapper {

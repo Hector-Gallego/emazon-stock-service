@@ -34,9 +34,10 @@ public class BrandJpaAdapter implements IBrandPersistencePort {
     }
 
     @Override
-    public CustomPage<Brand> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
+    public CustomPage<Brand> findAll(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
+
         Sort sort = Sort.by(Sort.Order.by(sortBy).with(Sort.Direction.fromString(sortDirection)));
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
         Page<BrandEntity> page = brandRepository.findAll(pageable);
         BrandPageMapper brandPageMapper = new BrandPageMapper(brandEntityMapper);

@@ -1,14 +1,10 @@
 package com.emazon.emazonstockservice.domain.util;
 
-public class BrandConstants {
+public final class BrandConstants {
 
     private BrandConstants() {
-        throw new IllegalStateException("Utility class");
+        throw new IllegalStateException();
     }
-        public enum BRAND_FIElDS{
-            NAME,
-            DESCRIPTION
-        }
 
         public static final int MAX_BRAND_NAME_LENGTH = 50;
 

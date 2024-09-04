@@ -38,17 +38,8 @@ public class BrandUseCase implements IBrandServicePort {
     @Override
     public CustomPage<Brand> listBrands(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
 
-        Integer validatedPageNo = PaginationValidator.validatePageNo(pageNo);
-        Integer validatedPageSize = PaginationValidator.validatePageSize(pageSize);
-        String validatedSortBy = PaginationValidator.validateSortBy(sortBy);
-        String validatedSortDirection = PaginationValidator.validateSortDirection(sortDirection);
-
-        return  brandPersistencePort.findAll(validatedPageNo, validatedPageSize, validatedSortBy, validatedSortDirection);
+        PaginationValidator.validatePaginationParameters(pageNo,pageSize,sortDirection,sortBy);
+        return  brandPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection);
 
     }
-
-
-
-
-
 }

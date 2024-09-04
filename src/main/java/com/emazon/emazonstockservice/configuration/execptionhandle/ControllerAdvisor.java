@@ -4,11 +4,16 @@ import com.emazon.emazonstockservice.configuration.util.ConfigurationConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.exceptions.FieldEmptyException;
 import com.emazon.emazonstockservice.domain.exceptions.FieldLimitExceededException;
+import com.emazon.emazonstockservice.domain.exceptions.InvalidParameterPaginationException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,18 +31,25 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(FieldLimitExceededException.class)
     public ResponseEntity<ErrorResponse> handleFieldLimitExceededException(FieldLimitExceededException exception) {
-        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, Collections.emptyList());
     }
 
     @ExceptionHandler(FieldEmptyException.class)
     public ResponseEntity<ErrorResponse> handleFieldEmptyException(FieldEmptyException exception) {
-        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, Collections.emptyList());
     }
 
     @ExceptionHandler(DuplicateNameException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateNameException(DuplicateNameException exception) {
-        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST);
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, Collections.emptyList());
     }
+
+    @ExceptionHandler(InvalidParameterPaginationException.class)
+    public ResponseEntity<ErrorResponse> handleParameterInvalidException(InvalidParameterPaginationException exception) {
+        return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, exception.getErrors());
+    }
+
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -47,40 +59,52 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
             @Nullable WebRequest request) {
 
         List<String> errorList = exception
-                .getBindingResult()
+                .getBindingResult()//la puedo eliminar
                 .getFieldErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toList();
 
-        ErrorResponse errorResponse = new ErrorResponse(
+        ErrorResponse response = new ErrorResponse(
                 LocalDateTime.now(),
                 ConfigurationConstants.INVALID_FIELDS,
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.value(),
                 errorList
-        );
-        return new ResponseEntity<>(errorResponse, headers, HttpStatus.BAD_REQUEST);
-    }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
-
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                ex.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                Collections.emptyList()
         );
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, HttpStatus status) {
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleGeneralException(RuntimeException exception) {
+        HttpStatus status;
+
+        if (exception instanceof IllegalArgumentException) {
+            status = HttpStatus.BAD_REQUEST;
+        } else if (exception instanceof NullPointerException) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        } else if (exception instanceof EntityNotFoundException) {
+            status = HttpStatus.NOT_FOUND;
+        }  else if (exception instanceof HttpMessageNotReadableException) {
+            status = HttpStatus.BAD_REQUEST;
+        } else if (exception instanceof DataIntegrityViolationException) {
+            status = HttpStatus.CONFLICT;
+        } else if (exception instanceof ConcurrencyFailureException) {
+            status = HttpStatus.LOCKED;
+        } else {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return buildErrorResponse(exception, status, Collections.emptyList());
+    }
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, HttpStatus status, List<String> erros) {
         ErrorResponse errorResponse = new ErrorResponse(
                 LocalDateTime.now(),
                 exception.getMessage(),
-                status,
-                Collections.emptyList()
+                status.value(),
+                erros
         );
         return new ResponseEntity<>(errorResponse, status);
     }

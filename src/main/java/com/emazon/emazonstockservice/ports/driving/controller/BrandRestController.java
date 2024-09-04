@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 
 
 @RestController
-@RequestMapping("/api/brand")
+@RequestMapping("/api/brand/")
 public class BrandRestController {
 
     private final IBrandServicePort brandServicePort;
@@ -43,7 +43,7 @@ public class BrandRestController {
     }
 
 
-    @PostMapping("/")
+    @PostMapping
     @Operation(summary = OpenApiConstants.OPENAPI_BRAND_SUMMARY, description = OpenApiConstants.OPENAPI_BRAND_DESCRIPTION)
     @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201, description = OpenApiConstants.BRAND_CREATED)
     @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400, description = OpenApiConstants.INVALID_INPUT)
@@ -60,7 +60,7 @@ public class BrandRestController {
         brandServicePort.saveBrand(brand);
 
         CustomApiResponse<Void> response = new CustomApiResponse<>(
-                HttpStatus.CREATED,
+                HttpStatus.CREATED.value(),
                 PortsConstants.BRAND_CREATED_SUCCESSFULLY,
                 null,
                 LocalDateTime.now());
@@ -69,7 +69,7 @@ public class BrandRestController {
 
     }
 
-    @GetMapping("/")
+    @GetMapping
     @Operation(summary = OpenApiConstants.OPENAPI_SUMMARY_LIST_BRANDS, description = OpenApiConstants.OPENAPI_DESCRIPTION_LIST_BRANDS)
     @ApiResponses(value = {
             @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200, description = OpenApiConstants.OPEN_API_LIST_BRANDS_SUCCESS,
@@ -81,18 +81,18 @@ public class BrandRestController {
                     content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON))
     })
     public ResponseEntity<CustomApiResponse<GenericListResponseDto<BrandResponseDto>>> listBrands(
-            @RequestParam int pageNo,
+            @RequestParam int pageNumber,
             @RequestParam int pageSize,
             @RequestParam String sortDirection,
             @RequestParam String sortBy) {
 
         CustomPage<Brand> brandPage = brandServicePort
-                .listBrands(pageNo, pageSize, sortBy, sortDirection);
+                .listBrands(pageNumber, pageSize, sortBy, sortDirection);
 
         GenericListResponseDto<BrandResponseDto> brandList = CustomPageMapper.convertToDto(brandPage, brandResponseMapper);
 
         CustomApiResponse<GenericListResponseDto<BrandResponseDto>> response = new CustomApiResponse<>(
-                HttpStatus.OK,
+                HttpStatus.OK.value(),
                 PortsConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
                 brandList,
                 LocalDateTime.now()

@@ -30,11 +30,17 @@ public class ArticleEntity {
     @Column(nullable = false)
     private Double price;
 
-    @OneToMany(mappedBy = "articleEntity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ArticleCategoryEntity> articleCategoryEntities;
+    @ManyToMany
+    @JoinTable(
+            name = "article_category",
+            joinColumns = @JoinColumn(name = "article_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<CategoryEntity> categoryEntities;
 
     @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
-    private BrandEntity brand;
+    private BrandEntity brandEntity;
+
 
 }
