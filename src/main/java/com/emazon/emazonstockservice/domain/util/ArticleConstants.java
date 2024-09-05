@@ -14,15 +14,9 @@ public final class ArticleConstants {
         QUANTITY,
         PRICE
     }
+    public static final String  ARTICLES_RETRIEVED_SUCCESSFULLY ="Articles retrieved successfully";
 
-
-    public static final String ARTICLE_SORT_BY_NAME = "name";
-    public static final String ARTICLE_SORT_BY_BRAND_NAME = "brandEntity.name";
-    public static final String ARTICLE_SORT_BY_CATEGORY_NAME = "categoryEntities.name";
-    public static final String ARTICLE_SORT_CASE_CATEGORY_NAME = "categoryName";
-    public static final String ARTICLE_SORT_CASE_BRAND_NAME = "brandName";
-    public static final String ARTICLE_SORT_CASE_NAME = "name";
-
+    public static final String ARTICLE_CREATED_SUCCESSFULLY = "Article created successfully";
 
     public static final String VALUE_CANNOT_BE_NEGATIVE = "The %s price cannot be less than 0.";
     public static final String CATEGORY_COUNT_OUT_OF_RANGE = "The number of categories associated with the article is not within the allowed range (min: 1, max: 3).";

@@ -66,10 +66,10 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
                 .toList();
 
         ErrorResponse response = new ErrorResponse(
-                LocalDateTime.now(),
-                ConfigurationConstants.INVALID_FIELDS,
                 HttpStatus.BAD_REQUEST.value(),
-                errorList
+                ConfigurationConstants.INVALID_FIELDS,
+                errorList,
+                LocalDateTime.now()
 
         );
 
@@ -99,12 +99,12 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return buildErrorResponse(exception, status, Collections.emptyList());
     }
 
-    private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, HttpStatus status, List<String> erros) {
+    private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, HttpStatus status, List<String> errors) {
         ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                exception.getMessage(),
                 status.value(),
-                erros
+                exception.getMessage(),
+                errors,
+                LocalDateTime.now()
         );
         return new ResponseEntity<>(errorResponse, status);
     }

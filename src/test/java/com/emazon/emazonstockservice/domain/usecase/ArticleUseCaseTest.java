@@ -316,10 +316,6 @@ class ArticleUseCaseTest {
         assertEquals(String.format(BrandConstants.BRAND_NOT_FOUND, brandId), exception.getMessage());
     }
 
-
-
-
-
     @Test
     void ShouldReturnArticlesWhenParametersAreValid() {
 

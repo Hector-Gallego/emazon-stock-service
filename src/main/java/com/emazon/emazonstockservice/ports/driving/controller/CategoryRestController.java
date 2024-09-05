@@ -1,8 +1,10 @@
 package com.emazon.emazonstockservice.ports.driving.controller;
 
 
+import com.emazon.emazonstockservice.configuration.execptionhandle.ErrorResponse;
 import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
 import com.emazon.emazonstockservice.domain.model.Category;
+import com.emazon.emazonstockservice.domain.util.CategoryConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.request.CategoryRequestDto;
 import com.emazon.emazonstockservice.ports.driving.dto.response.CategoryResponseDto;
@@ -12,8 +14,8 @@ import com.emazon.emazonstockservice.ports.driving.mapper.CategoryRequestMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.CategoryResponseMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.CustomPageMapper;
 import com.emazon.emazonstockservice.ports.util.OpenApiConstants;
-import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +29,7 @@ import java.time.LocalDateTime;
 
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/api/category/")
 public class CategoryRestController {
 
     private final ICategoryServicePort categoryServicePort;
@@ -42,20 +44,24 @@ public class CategoryRestController {
     private final CategoryRequestMapper categoryRequestMapper;
 
 
+    @Operation(summary = OpenApiConstants.OPENAPI_CREATE_CATEGORY_SUMMARY,
+            description = OpenApiConstants.OPENAPI_CREATE_CATEGORY_DESCRIPTION)
 
-
-
-    @Operation(summary = OpenApiConstants.OPENAPI_CATEGORY_SUMMARY, description = OpenApiConstants.OPENAPI_CATEGORY_DESCRIPTION)
-    @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201, description = OpenApiConstants.CATEGORY_CREATED)
-    @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400, description = OpenApiConstants.INVALID_INPUT)
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = OpenApiConstants.CATEGORY_DATA,
-            required = true,
-            content = @Content(
-                    schema = @Schema(implementation = CategoryRequestDto.class)
-            )
-    )
-    @PostMapping("/")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201,
+                    description = OpenApiConstants.CATEGORY_CREATED,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomApiResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping
     public ResponseEntity<CustomApiResponse<Void>> saveCategory(@Validated @RequestBody CategoryRequestDto categoryRequestDto) {
 
         Category category = categoryRequestMapper.toDomain(categoryRequestDto);
@@ -63,7 +69,7 @@ public class CategoryRestController {
 
         CustomApiResponse<Void> response = new CustomApiResponse<>(
                 HttpStatus.CREATED.value(),
-                PortsConstants.CATEGORY_CREATED_SUCCESSFULLY,
+                CategoryConstants.CATEGORY_CREATED_SUCCESSFULLY,
                 null,
                 LocalDateTime.now());
 
@@ -72,25 +78,36 @@ public class CategoryRestController {
     }
 
 
-    @GetMapping("/")
-    @Operation(summary = OpenApiConstants.OPENAPI_SUMMARY_LIST_CATEGORIES, description = OpenApiConstants.OPENAPI_DESCRIPTION_LIST_CATEGORIES)
+    @Operation(summary = OpenApiConstants.OPENAPI_SUMMARY_LIST_CATEGORIES,
+            description = OpenApiConstants.OPENAPI_DESCRIPTION_LIST_CATEGORIES)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200, description = OpenApiConstants.OPEN_API_LIST_CATEGORIES_SUCCESS,
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
+                    description = OpenApiConstants.OPEN_API_LIST_CATEGORIES_SUCCESS),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
                     content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
-                            schema = @Schema(implementation = CustomApiResponse.class))),
-            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400, description = OpenApiConstants.OPEN_API_INVALID_PARAMETERS,
-                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON)),
-            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500, description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
-                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON))
+                            schema = @Schema(implementation = ErrorResponse.class))),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class)))
     })
+    @GetMapping
     public ResponseEntity<CustomApiResponse<GenericListResponseDto<CategoryResponseDto>>> listCategories(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
+            @Parameter(required = true, schema = @Schema(
+                    allowableValues = {
+                            OpenApiConstants.OPEN_API_ASC_ORDER,
+                            OpenApiConstants.OPEN_API_DESC_ORDER}))
             @RequestParam String sortDirection,
+            @Parameter(required = true,
+                    schema = @Schema(allowableValues = {
+                            OpenApiConstants.SORT_BY_NAME}))
             @RequestParam String sortBy) {
-
-
-
 
         CustomPage<Category> categoryPage = categoryServicePort
                 .listCategories(pageNumber, pageSize, sortBy, sortDirection);
@@ -99,7 +116,7 @@ public class CategoryRestController {
 
         CustomApiResponse<GenericListResponseDto<CategoryResponseDto>> response = new CustomApiResponse<>(
                 HttpStatus.OK.value(),
-                PortsConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
+                CategoryConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
                 categoryList,
                 LocalDateTime.now()
         );

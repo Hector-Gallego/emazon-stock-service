@@ -1,6 +1,8 @@
 package com.emazon.emazonstockservice.ports.driving.dto.request;
 
 
+import com.emazon.emazonstockservice.domain.util.BrandConstants;
+import com.emazon.emazonstockservice.domain.util.CategoryConstants;
 import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -33,11 +35,11 @@ public class ArticleRequestDto {
     @DecimalMin(value = "0.0", message = PortsConstants.PRICE_MUST_BE_POSITIVE_OR_ZERO)
     private Double price;
 
-    @NotNull(message = PortsConstants.CATEGORY_IDS_CANNOT_BE_NULL)
-    @NotEmpty(message = PortsConstants.CATEGORY_IDS_CANNOT_BE_EMPTY)
+    @NotNull(message = CategoryConstants.CATEGORY_IDS_CANNOT_BE_NULL)
+    @NotEmpty(message = CategoryConstants.CATEGORY_IDS_CANNOT_BE_EMPTY)
     private List<Long> categoryIds;
 
-    @NotNull(message = PortsConstants.BRAND_ID_CANNOT_BE_NULL)
+    @NotNull(message = BrandConstants.BRAND_ID_CANNOT_BE_NULL)
     private Long brandId;
 
 }

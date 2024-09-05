@@ -1,7 +1,6 @@
 package com.emazon.emazonstockservice.ports.driving.dto.response;
 
 import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.model.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,7 @@ public class ArticleResponseDto {
     private String description;
     private Integer quantity;
     private Double price;
-    private Set<Category> categories;
+    private Set<CategoryListResponseDto> categories;
     private Brand brand;
 
 }

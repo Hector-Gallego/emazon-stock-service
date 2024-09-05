@@ -11,12 +11,11 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
-
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ErrorResponse {
 
-    private LocalDateTime timestamp;
-    private String message;
     private Integer status;
+    private String message;
     private List<String> errors;
+    private LocalDateTime timestamp;
 }

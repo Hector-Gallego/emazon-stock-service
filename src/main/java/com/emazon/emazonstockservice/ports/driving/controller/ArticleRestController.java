@@ -1,8 +1,10 @@
 package com.emazon.emazonstockservice.ports.driving.controller;
 
 
+import com.emazon.emazonstockservice.configuration.execptionhandle.ErrorResponse;
 import com.emazon.emazonstockservice.domain.api.IArticleServicePort;
 import com.emazon.emazonstockservice.domain.model.Article;
+import com.emazon.emazonstockservice.domain.util.ArticleConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.request.ArticleRequestDto;
 import com.emazon.emazonstockservice.ports.driving.dto.response.ArticleResponseDto;
@@ -12,11 +14,12 @@ import com.emazon.emazonstockservice.ports.driving.mapper.ArticleRequestMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.ArticleResponseMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.CustomPageMapper;
 import com.emazon.emazonstockservice.ports.util.OpenApiConstants;
-import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/article")
+@RequestMapping("/api/article/")
 public class ArticleRestController {
 
 
@@ -41,18 +44,24 @@ public class ArticleRestController {
     }
 
 
+    @Operation(summary = OpenApiConstants.OPENAPI_CREATE_ARTICLE_SUMMARY,
+            description = OpenApiConstants.OPENAPI_CREATE_ARTICLE_DESCRIPTION)
 
-    @Operation(summary = OpenApiConstants.OPENAPI_ARTICLE_SUMMARY, description = OpenApiConstants.OPENAPI_ARTICLE_DESCRIPTION)
-    @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201, description = OpenApiConstants.ARTICLE_CREATED)
-    @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400, description = OpenApiConstants.INVALID_INPUT)
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = OpenApiConstants.ARTICLE_DATA,
-            required = true,
-            content = @Content(
-                    schema = @Schema(implementation = ArticleRequestDto.class)
-            )
-    )
-    @PostMapping("/")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201,
+                    description = OpenApiConstants.ARTICLE_CREATED,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomApiResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping
     public ResponseEntity<CustomApiResponse<Void>> saveArticle(@Validated @RequestBody ArticleRequestDto articleRequestDto) {
 
 
@@ -63,21 +72,44 @@ public class ArticleRestController {
 
         CustomApiResponse<Void> response = new CustomApiResponse<>(
                 HttpStatus.OK.value(),
-                PortsConstants.ARTICLE_CREATED_SUCCESSFULLY,
+                ArticleConstants.ARTICLE_CREATED_SUCCESSFULLY,
                 null,
                 LocalDateTime.now()
         );
-
         return ResponseEntity.ok().body(response);
-
     }
 
+    @Operation(summary = OpenApiConstants.OPENAPI_SUMMARY_LIST_ARTICLES,
+            description = OpenApiConstants.OPENAPI_DESCRIPTION_LIST_ARTICLES)
+    @ApiResponses(value = {
 
-    @GetMapping("/")
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
+                    description = OpenApiConstants.OPEN_API_LIST_ARTICLES_SUCCESS),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class))),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping
     public ResponseEntity<CustomApiResponse<GenericListResponseDto<ArticleResponseDto>>> listArticles(
             @RequestParam int pageNumber,
             @RequestParam int pageSize,
+            @Parameter(required = true, schema = @Schema(
+                    allowableValues = {
+                            OpenApiConstants.OPEN_API_ASC_ORDER,
+                            OpenApiConstants.OPEN_API_DESC_ORDER}))
             @RequestParam String sortDirection,
+            @Parameter(required = true,
+                    schema = @Schema(allowableValues = {
+                            OpenApiConstants.SORT_BY_NAME,
+                            OpenApiConstants.SORT_BY_BRAND_NAME,
+                            OpenApiConstants.SORT_BY_CATEGORY_NAME}))
             @RequestParam String sortBy) {
 
         CustomPage<Article> articlePage = articleServicePort
@@ -87,7 +119,7 @@ public class ArticleRestController {
 
         CustomApiResponse<GenericListResponseDto<ArticleResponseDto>> response = new CustomApiResponse<>(
                 HttpStatus.OK.value(),
-                PortsConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
+                ArticleConstants.ARTICLES_RETRIEVED_SUCCESSFULLY,
                 articleList,
                 LocalDateTime.now()
         );

@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-public class CategoryArticleResponseDto {
+public class CategoryListResponseDto {
+
     private Long id;
     private String name;
 }
