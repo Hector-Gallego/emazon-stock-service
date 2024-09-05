@@ -1,22 +1,29 @@
 package com.emazon.emazonstockservice.ports.driven.adapter;
 
-import com.emazon.emazonstockservice.domain.exceptions.DataNotFoundException;
 import com.emazon.emazonstockservice.domain.model.Article;
 import com.emazon.emazonstockservice.domain.spi.IArticlePersistencePort;
-import com.emazon.emazonstockservice.domain.util.BrandConstants;
-import com.emazon.emazonstockservice.domain.util.CategoryConstants;
-import com.emazon.emazonstockservice.ports.driven.entity.ArticleCategoryEntity;
+import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driven.entity.ArticleEntity;
 import com.emazon.emazonstockservice.ports.driven.entity.BrandEntity;
 import com.emazon.emazonstockservice.ports.driven.entity.CategoryEntity;
 import com.emazon.emazonstockservice.ports.driven.mapper.ArticleEntityMapper;
+import com.emazon.emazonstockservice.ports.driven.mapper.ArticlePageMapper;
 import com.emazon.emazonstockservice.ports.driven.repository.IArticleRepository;
 import com.emazon.emazonstockservice.ports.driven.repository.IBrandRepository;
 import com.emazon.emazonstockservice.ports.driven.repository.ICategoryRepository;
+import com.emazon.emazonstockservice.ports.util.ArticleSortOptions;
+import com.emazon.emazonstockservice.ports.util.SortUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 
 public class ArticleJpaAdapter implements IArticlePersistencePort {
 
@@ -38,53 +45,48 @@ public class ArticleJpaAdapter implements IArticlePersistencePort {
 
 
     @Override
-    public void saveArticle(Article article, List<Long> categoryIds, Long brandId) {
-
-
-        //mapper article to article entity
+    public void saveArticle(Article article, Set<CategoryEntity> categoryEntities, BrandEntity brandEntity) {
 
         ArticleEntity articleEntity = articleEntityMapper.toEntity(article);
-
-
-        // Busco la entidad Brand por ID
-        BrandEntity brandEntity = brandRepository.findById(brandId)
-                .orElseThrow(() -> new DataNotFoundException(String.format(
-                        BrandConstants.BRAND_NOT_FOUND, brandId)
-                ));
-
-        articleEntity.setBrand(brandEntity);
-
-
-        // Creo el conjunto de ArticleCategory
-        Set<ArticleCategoryEntity> articleCategoryEntities = new HashSet<>();
-
-        for (Long categoryId : categoryIds) {
-            // busco la entidad Category por Id
-            CategoryEntity categoryEntity = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new DataNotFoundException(String.format(
-                            CategoryConstants.CATEGORY_NOT_FOUND, categoryId)));
-
-            // Crear un objeto ArticleCategory
-            ArticleCategoryEntity articleCategoryEntity = new ArticleCategoryEntity();
-
-            // Agrego los objetos Article y Category
-            articleCategoryEntity.setArticleEntity(articleEntity);
-            articleCategoryEntity.setCategoryEntity(categoryEntity);
-
-            // Agregar ArticleCategoryEntity al conjunto
-            articleCategoryEntities.add(articleCategoryEntity);
-        }
-
-        // Asigno las categorías al artículo
-        articleEntity.setArticleCategoryEntities(articleCategoryEntities);
-
-        // guardo el artículo
+        articleEntity.setBrandEntity(brandEntity);
+        articleEntity.setCategoryEntities(categoryEntities);
         articleRepository.save(articleEntity);
-
     }
 
     @Override
     public boolean existByName(String name) {
         return articleRepository.findByName(name).isPresent();
     }
+
+
+    @Override
+    public Optional<BrandEntity> findBrandById(Long brandId) {
+        return brandRepository.findById(brandId);
+    }
+
+    @Override
+    public CustomPage<Article> findAll(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
+
+        ArticleSortOptions sortOption = ArticleSortOptions.valueOf(sortBy.toUpperCase());
+
+        Sort articleSort = SortUtil.getSort(sortOption, sortDirection);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, articleSort);
+
+        Page<ArticleEntity> page = articleRepository.findAll(pageable);
+
+        return new ArticlePageMapper(articleEntityMapper).toCustomPage(page);
+
+
+    }
+
+    @Override
+    public Map<Long, Optional<CategoryEntity>> findCategoryByIds(List<Long> categoryIds) {
+        return categoryIds.stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        categoryRepository::findById
+                ));
+    }
+
+
 }

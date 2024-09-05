@@ -7,4 +7,5 @@ public interface IBrandServicePort {
     void saveBrand(Brand brand);
     CustomPage<Brand> listBrands(Integer pageNo, Integer pageSize, String sortBy, String sortDirection);
 
+
 }

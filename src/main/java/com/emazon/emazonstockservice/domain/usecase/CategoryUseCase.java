@@ -44,12 +44,8 @@ public class CategoryUseCase implements ICategoryServicePort {
     @Override
     public CustomPage<Category> listCategories(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
 
-        Integer validatedPageNo = PaginationValidator.validatePageNo(pageNo);
-        Integer validatedPageSize = PaginationValidator.validatePageSize(pageSize);
-        String validatedSortBy = PaginationValidator.validateSortBy(sortBy);
-        String validatedSortDirection = PaginationValidator.validateSortDirection(sortDirection);
-
-        return  categoryPersistencePort.findAll(validatedPageNo, validatedPageSize, validatedSortBy, validatedSortDirection);
+        PaginationValidator.validatePaginationParameters(pageNo, pageSize,sortDirection, sortBy);
+        return  categoryPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection);
     }
 
 

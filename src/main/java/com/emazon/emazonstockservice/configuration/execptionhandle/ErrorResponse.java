@@ -1,11 +1,9 @@
 package com.emazon.emazonstockservice.configuration.execptionhandle;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,10 +11,11 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ErrorResponse {
 
-    private LocalDateTime timestamp;
+    private Integer status;
     private String message;
-    private HttpStatus status;
     private List<String> errors;
+    private LocalDateTime timestamp;
 }

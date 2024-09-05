@@ -1,33 +1,52 @@
 package com.emazon.emazonstockservice.domain.util;
 
+import com.emazon.emazonstockservice.domain.exceptions.InvalidParameterPaginationException;
+import com.emazon.emazonstockservice.ports.util.ArticleSortOptions;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class PaginationValidator {
 
     private PaginationValidator(){
-        throw  new IllegalStateException();
+        throw new IllegalStateException();
     }
 
-    public static final int DEFAULT_PAGE_NO = 0;
-    public static final int DEFAULT_PAGE_SIZE = 10;
-    public static final String DEFAULT_SORT_DIRECTION = "asc";
-    public static final String DEFAULT_SORT_BY = "name";
+    public static void validateArticleSortOptionParameters(String sortBy){
 
-    public static int validatePageNo(Integer pageNo) {
-        return (pageNo == null || pageNo < 0) ? DEFAULT_PAGE_NO : pageNo;
-    }
-
-    public static int validatePageSize(Integer pageSize) {
-        return (pageSize == null || pageSize <= 0) ? DEFAULT_PAGE_SIZE : pageSize;
-    }
-
-    public static String validateSortDirection(String sortDirection) {
-        if (sortDirection == null || (!sortDirection.equalsIgnoreCase("asc") && !sortDirection.equalsIgnoreCase("desc"))) {
-            return DEFAULT_SORT_DIRECTION;
+        try {
+            ArticleSortOptions.valueOf(sortBy.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidParameterPaginationException(DomainsConstants.INVALID_SORT_BY + " : " + sortBy, Collections.emptyList());
         }
-        return sortDirection.toLowerCase();
-    }
 
-    public static String validateSortBy(String sortBy) {
-        return (sortBy == null || sortBy.isEmpty()) ? DEFAULT_SORT_BY : sortBy;
+
+
+
+    }
+    public static void validatePaginationParameters(Integer pageNo, Integer pageSize, String sortDirection, String sortBy) {
+        List<String> errors = new ArrayList<>();
+
+        if (pageNo == null || pageNo < 0) {
+            errors.add(DomainsConstants.INVALID_PAGE_NO);
+        }
+
+        if (pageSize == null || pageSize <= 0) {
+            errors.add(DomainsConstants.INVALID_PAGE_SIZE);
+        }
+
+        if (sortDirection == null || (!sortDirection.equalsIgnoreCase("asc") && !sortDirection.equalsIgnoreCase("desc"))) {
+            errors.add(DomainsConstants.INVALID_SORT_DIRECTION);
+        }
+
+        if (sortBy == null || sortBy.isEmpty()) {
+            errors.add(DomainsConstants.INVALID_SORT_BY);
+        }
+
+        if (!errors.isEmpty()) {
+            throw new InvalidParameterPaginationException(DomainsConstants.INVALID_PARAMETERS_MESSAGE, errors);
+        }
     }
 
 }

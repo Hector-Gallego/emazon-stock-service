@@ -8,5 +8,5 @@ public interface IBrandPersistencePort {
 
     void saveBrand(Brand brand);
     boolean existsByName(String name);
-    CustomPage<Brand> findAll(Integer pageNo, Integer pageSize, String sortBy, String sortDirection);
+    CustomPage<Brand> findAll(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
 }

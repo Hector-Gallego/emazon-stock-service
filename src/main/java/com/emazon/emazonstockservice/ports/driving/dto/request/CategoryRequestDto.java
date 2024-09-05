@@ -1,6 +1,7 @@
 package com.emazon.emazonstockservice.ports.driving.dto.request;
 
 
+import com.emazon.emazonstockservice.domain.util.CategoryConstants;
 import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,11 +21,11 @@ public class CategoryRequestDto {
 
     @NotNull(message = PortsConstants.NAME_CANNOT_BE_NULL)
     @NotBlank(message = PortsConstants.NAME_CANNOT_BE_EMPTY)
-    @Size(max = PortsConstants.MAX_CATEGORY_NAME_LENGTH, message = PortsConstants.MAX_CATEGORY_NAME_LENGTH_MESSAGE)
+    @Size(max = CategoryConstants.MAX_CATEGORY_NAME_LENGTH, message = CategoryConstants.MAX_CATEGORY_NAME_LENGTH_MESSAGE)
     private String name;
 
     @NotNull(message = PortsConstants.DESCRIPTION_CANNOT_BE_NULL)
     @NotBlank(message = PortsConstants.DESCRIPTION_CANNOT_BE_EMPTY)
-    @Size(max = PortsConstants.MAX_CATEGORY_DESCRIPTION_LENGTH, message = PortsConstants.MAX_CATEGORY_DESCRIPTION_LENGTH_MESSAGE)
+    @Size(max = CategoryConstants.MAX_CATEGORY_DESCRIPTION_LENGTH, message = CategoryConstants.MAX_CATEGORY_DESCRIPTION_LENGTH_MESSAGE)
     private String description;
 }

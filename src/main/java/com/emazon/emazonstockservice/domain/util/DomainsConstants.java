@@ -18,6 +18,12 @@ public final class DomainsConstants {
     public static final String NAME_CANNOT_BE_EMPTY = "Name cannot be empty.";
     public static final String DESCRIPTION_CANNOT_BE_EMPTY = "Description cannot be empty.";
 
+    public static final String INVALID_PAGE_NO = "Invalid page number. It must be a non-negative integer.";
+    public static final String INVALID_PAGE_SIZE = "Invalid page size. It must be a positive integer.";
+    public static final String INVALID_SORT_DIRECTION = "Invalid sort direction. It must be either 'asc' or 'desc'.";
+    public static final String INVALID_SORT_BY = "Invalid sort field";
+    public static final String INVALID_PARAMETERS_MESSAGE = "One or more parameters are invalid.";
+
 
 
 

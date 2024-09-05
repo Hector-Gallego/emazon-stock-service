@@ -1,7 +1,9 @@
 package com.emazon.emazonstockservice.ports.driving.controller;
 
+import com.emazon.emazonstockservice.configuration.execptionhandle.ErrorResponse;
 import com.emazon.emazonstockservice.domain.api.IBrandServicePort;
 import com.emazon.emazonstockservice.domain.model.Brand;
+import com.emazon.emazonstockservice.domain.util.BrandConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.request.BrandRequestDto;
 import com.emazon.emazonstockservice.ports.driving.dto.response.BrandResponseDto;
@@ -11,8 +13,8 @@ import com.emazon.emazonstockservice.ports.driving.mapper.BrandRequestMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.BrandResponseMapper;
 import com.emazon.emazonstockservice.ports.driving.mapper.CustomPageMapper;
 import com.emazon.emazonstockservice.ports.util.OpenApiConstants;
-import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +29,7 @@ import java.time.LocalDateTime;
 
 
 @RestController
-@RequestMapping("/api/brand")
+@RequestMapping("/api/brand/")
 public class BrandRestController {
 
     private final IBrandServicePort brandServicePort;
@@ -43,25 +45,34 @@ public class BrandRestController {
     }
 
 
-    @PostMapping("/")
-    @Operation(summary = OpenApiConstants.OPENAPI_BRAND_SUMMARY, description = OpenApiConstants.OPENAPI_BRAND_DESCRIPTION)
-    @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201, description = OpenApiConstants.BRAND_CREATED)
-    @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400, description = OpenApiConstants.INVALID_INPUT)
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            description = OpenApiConstants.BRAND_DATA,
-            required = true,
-            content = @Content(
-                    schema = @Schema(implementation = BrandRequestDto.class)
-            )
-    )
+
+
+    @Operation(summary = OpenApiConstants.OPENAPI_CREATE_BRAND_SUMMARY,
+            description = OpenApiConstants.OPENAPI_CREATE_BRAND_DESCRIPTION)
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201,
+                    description = OpenApiConstants.BRAND_CREATED,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomApiResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PostMapping
     public ResponseEntity<CustomApiResponse<Void>> saveBrand(@Validated @RequestBody BrandRequestDto brandRequestDto){
 
         Brand brand = brandRequestMapper.toDomain(brandRequestDto);
         brandServicePort.saveBrand(brand);
 
         CustomApiResponse<Void> response = new CustomApiResponse<>(
-                HttpStatus.CREATED,
-                PortsConstants.BRAND_CREATED_SUCCESSFULLY,
+                HttpStatus.CREATED.value(),
+                BrandConstants.BRAND_CREATED_SUCCESSFULLY,
                 null,
                 LocalDateTime.now());
 
@@ -69,31 +80,48 @@ public class BrandRestController {
 
     }
 
-    @GetMapping("/")
-    @Operation(summary = OpenApiConstants.OPENAPI_SUMMARY_LIST_BRANDS, description = OpenApiConstants.OPENAPI_DESCRIPTION_LIST_BRANDS)
+
+
+
+    @Operation(summary = OpenApiConstants.OPENAPI_SUMMARY_LIST_BRANDS,
+            description = OpenApiConstants.OPENAPI_DESCRIPTION_LIST_BRANDS)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200, description = OpenApiConstants.OPEN_API_LIST_BRANDS_SUCCESS,
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
+                    description = OpenApiConstants.OPEN_API_LIST_BRANDS_SUCCESS),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
                     content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
-                            schema = @Schema(implementation = CustomApiResponse.class))),
-            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400, description = OpenApiConstants.OPEN_API_INVALID_PARAMETERS,
-                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON)),
-            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500, description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
-                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON))
+                            schema = @Schema(implementation = ErrorResponse.class))),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class)))
     })
+    @GetMapping
     public ResponseEntity<CustomApiResponse<GenericListResponseDto<BrandResponseDto>>> listBrands(
-            @RequestParam int pageNo,
+            @RequestParam int pageNumber,
             @RequestParam int pageSize,
+            @Parameter(required = true, schema = @Schema(
+                    allowableValues = {
+                            OpenApiConstants.OPEN_API_ASC_ORDER,
+                            OpenApiConstants.OPEN_API_DESC_ORDER}))
             @RequestParam String sortDirection,
+            @Parameter(required = true,
+                    schema = @Schema(allowableValues = {
+                            OpenApiConstants.SORT_BY_NAME}))
             @RequestParam String sortBy) {
 
         CustomPage<Brand> brandPage = brandServicePort
-                .listBrands(pageNo, pageSize, sortBy, sortDirection);
+                .listBrands(pageNumber, pageSize, sortBy, sortDirection);
 
         GenericListResponseDto<BrandResponseDto> brandList = CustomPageMapper.convertToDto(brandPage, brandResponseMapper);
 
         CustomApiResponse<GenericListResponseDto<BrandResponseDto>> response = new CustomApiResponse<>(
-                HttpStatus.OK,
-                PortsConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
+                HttpStatus.OK.value(),
+                BrandConstants.BRANDS_RETRIEVED_SUCCESSFULLY,
                 brandList,
                 LocalDateTime.now()
         );

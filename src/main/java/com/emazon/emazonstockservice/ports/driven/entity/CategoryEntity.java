@@ -2,12 +2,12 @@ package com.emazon.emazonstockservice.ports.driven.entity;
 
 
 import com.emazon.emazonstockservice.domain.util.CategoryConstants;
-import com.emazon.emazonstockservice.domain.util.DomainsConstants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Entity
 @Table(name = "category")
@@ -26,6 +26,7 @@ public class CategoryEntity {
     private String name;
     @Column(nullable = false, length = CategoryConstants.MAX_CATEGORY_DESCRIPTION_LENGTH)
     private String description;
+
 
 
 }
