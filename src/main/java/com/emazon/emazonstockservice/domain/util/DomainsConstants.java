@@ -2,12 +2,17 @@ package com.emazon.emazonstockservice.domain.util;
 
 public final class DomainsConstants {
 
+
+
+    private DomainsConstants(){
+        throw new IllegalStateException("Utility class");
+    }
+
     public enum MODEL_NAMES{
         CATEGORY,
         BRAND,
         ARTICLE
     }
-
 
 
     public static final String MAX_NAME_LENGTH_MESSAGE = "The field Name cannot exceed %d characters.;";
@@ -24,14 +29,6 @@ public final class DomainsConstants {
     public static final String INVALID_SORT_BY = "Invalid sort field";
     public static final String INVALID_PARAMETERS_MESSAGE = "One or more parameters are invalid.";
 
-
-
-
-
-
-    private DomainsConstants(){
-        throw new IllegalStateException("Utility class");
-    }
 
     public static String getDuplicateNameFieldMessage( String field, String name) {
         return String.format("A %s with the name '%s' already exists.", field, name);

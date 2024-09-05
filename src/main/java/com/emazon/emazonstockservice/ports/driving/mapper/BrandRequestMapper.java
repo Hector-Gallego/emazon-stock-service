@@ -10,7 +10,6 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface BrandRequestMapper {
-
     Brand toDomain(BrandRequestDto brandRequestDto);
 }
 

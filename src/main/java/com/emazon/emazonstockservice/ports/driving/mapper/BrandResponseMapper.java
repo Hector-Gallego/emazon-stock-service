@@ -9,7 +9,6 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface BrandResponseMapper extends GenericMapper<Brand, BrandResponseDto> {
-
     Brand toDomain(BrandResponseDto brandResponseDto);
     BrandResponseDto toDto(Brand brand);
 }
