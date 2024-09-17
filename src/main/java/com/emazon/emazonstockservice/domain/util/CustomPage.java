@@ -13,7 +13,6 @@ public class CustomPage<T> {
     private Boolean first;
     private Boolean last;
 
-    // Constructor privado
     private CustomPage(Builder<T> builder) {
         this.content = builder.content;
         this.pageNumber = builder.pageNumber;
@@ -24,7 +23,7 @@ public class CustomPage<T> {
         this.last = builder.last;
     }
 
-    // Getters
+
     public List<T> getContent() {
         return content;
     }
@@ -53,7 +52,6 @@ public class CustomPage<T> {
         return last;
     }
 
-    // Builder estático
     public static class Builder<T> {
         private List<T> content;
         private Integer pageNumber;
