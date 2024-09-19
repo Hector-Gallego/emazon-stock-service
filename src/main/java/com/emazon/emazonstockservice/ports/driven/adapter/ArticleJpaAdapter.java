@@ -1,18 +1,24 @@
 package com.emazon.emazonstockservice.ports.driven.adapter;
 
+import com.emazon.emazonstockservice.domain.exceptions.DataNotFoundException;
 import com.emazon.emazonstockservice.domain.model.Article;
-import com.emazon.emazonstockservice.domain.spi.IArticlePersistencePort;
+import com.emazon.emazonstockservice.domain.model.Brand;
+import com.emazon.emazonstockservice.domain.model.Category;
+import com.emazon.emazonstockservice.domain.spi.ArticlePersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driven.entity.ArticleEntity;
 import com.emazon.emazonstockservice.ports.driven.entity.BrandEntity;
 import com.emazon.emazonstockservice.ports.driven.entity.CategoryEntity;
 import com.emazon.emazonstockservice.ports.driven.mapper.ArticleEntityMapper;
 import com.emazon.emazonstockservice.ports.driven.mapper.ArticlePageMapper;
+import com.emazon.emazonstockservice.ports.driven.mapper.BrandEntityMapper;
+import com.emazon.emazonstockservice.ports.driven.mapper.CategoryEntityMapper;
 import com.emazon.emazonstockservice.ports.driven.repository.IArticleRepository;
 import com.emazon.emazonstockservice.ports.driven.repository.IBrandRepository;
 import com.emazon.emazonstockservice.ports.driven.repository.ICategoryRepository;
 import com.emazon.emazonstockservice.ports.util.ArticleSortOptions;
 import com.emazon.emazonstockservice.ports.util.SortUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,30 +31,36 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public class ArticleJpaAdapter implements IArticlePersistencePort {
+public class ArticleJpaAdapter implements ArticlePersistencePort {
 
-    private final ICategoryRepository categoryRepository;
+
     private final IArticleRepository articleRepository;
-    private final IBrandRepository brandRepository;
     private final ArticleEntityMapper articleEntityMapper;
+    private final BrandEntityMapper brandEntityMapper;
+    private final CategoryEntityMapper categoryEntityMapper;
 
 
-    public ArticleJpaAdapter(ICategoryRepository categoryRepository,
-                             IArticleRepository articleRepository,
-                             IBrandRepository brandRepository,
-                             ArticleEntityMapper articleEntityMapper) {
-        this.categoryRepository = categoryRepository;
+    public ArticleJpaAdapter(
+            IArticleRepository articleRepository,
+            ArticleEntityMapper articleEntityMapper, BrandEntityMapper brandEntityMapper, CategoryEntityMapper categoryEntityMapper) {
+
         this.articleRepository = articleRepository;
-        this.brandRepository = brandRepository;
         this.articleEntityMapper = articleEntityMapper;
+        this.brandEntityMapper = brandEntityMapper;
+        this.categoryEntityMapper = categoryEntityMapper;
     }
 
 
     @Override
-    public void saveArticle(Article article, Set<CategoryEntity> categoryEntities, BrandEntity brandEntity) {
+    public void saveArticle(Article article, Set<Category> categories, Brand brand) {
 
         ArticleEntity articleEntity = articleEntityMapper.toEntity(article);
-        articleEntity.setBrandEntity(brandEntity);
+        articleEntity.setBrandEntity(brandEntityMapper.toEntity(brand));
+
+        Set<CategoryEntity> categoryEntities = categories.stream()
+                .map(categoryEntityMapper::toEntity)
+                .collect(Collectors.toSet());
+
         articleEntity.setCategoryEntities(categoryEntities);
         articleRepository.save(articleEntity);
     }
@@ -58,11 +70,6 @@ public class ArticleJpaAdapter implements IArticlePersistencePort {
         return articleRepository.findByName(name).isPresent();
     }
 
-
-    @Override
-    public Optional<BrandEntity> findBrandById(Long brandId) {
-        return brandRepository.findById(brandId);
-    }
 
     @Override
     public CustomPage<Article> findAll(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
@@ -80,12 +87,24 @@ public class ArticleJpaAdapter implements IArticlePersistencePort {
     }
 
     @Override
-    public Map<Long, Optional<CategoryEntity>> findCategoryByIds(List<Long> categoryIds) {
-        return categoryIds.stream()
-                .collect(Collectors.toMap(
-                        id -> id,
-                        categoryRepository::findById
-                ));
+    public void AddStock(Long articleId, Integer quantity) {
+
+        Optional<ArticleEntity> articleOpt = articleRepository.findById(articleId);
+        if (articleOpt.isPresent()) {
+            ArticleEntity article = articleOpt.get();
+            article.setQuantity(article.getQuantity() + quantity);
+            articleRepository.save(article);
+        } else {
+            throw new DataNotFoundException("Article with ID " + articleId + " not found.");
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public Optional<Article> findArticleById(Long articleId) {
+        return articleRepository.findById(articleId)
+                .map(articleEntityMapper::toDomain);
     }
 
 

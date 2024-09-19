@@ -1,5 +1,7 @@
-package com.emazon.emazonstockservice.domain.util;
+package com.emazon.emazonstockservice.domain.validator;
 
+import com.emazon.emazonstockservice.domain.constants.ArticleConstants;
+import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateCategoryException;
 import com.emazon.emazonstockservice.domain.exceptions.FieldEmptyException;
 import com.emazon.emazonstockservice.domain.exceptions.InvalidCategoryCountException;
@@ -50,7 +52,7 @@ public final class ArticleValidator {
 
     public static void  validateName(String name){
         if (name == null || name.isBlank()){
-            throw new FieldEmptyException(DomainsConstants.NAME_CANNOT_BE_EMPTY);
+            throw new FieldEmptyException(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY);
         }
     }
 
@@ -63,7 +65,7 @@ public final class ArticleValidator {
     public static void validateDescription(String description){
 
         if (description == null || description.isBlank()){
-            throw new FieldEmptyException(DomainsConstants.DESCRIPTION_CANNOT_BE_EMPTY);
+            throw new FieldEmptyException(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY);
         }
 
 

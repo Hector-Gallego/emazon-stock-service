@@ -2,9 +2,9 @@ package com.emazon.emazonstockservice.ports.driving.controller;
 
 
 import com.emazon.emazonstockservice.configuration.execptionhandle.ErrorResponse;
-import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
+import com.emazon.emazonstockservice.domain.api.CategoryServicePort;
 import com.emazon.emazonstockservice.domain.model.Category;
-import com.emazon.emazonstockservice.domain.util.CategoryConstants;
+import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.request.CategoryRequestDto;
 import com.emazon.emazonstockservice.ports.driving.dto.response.CategoryResponseDto;
@@ -29,13 +29,13 @@ import java.time.LocalDateTime;
 
 
 @RestController
-@RequestMapping("/api/category/")
+@RequestMapping("/api/category")
 public class CategoryRestController {
 
-    private final ICategoryServicePort categoryServicePort;
+    private final CategoryServicePort categoryServicePort;
     private final CategoryResponseMapper categoryResponseMapper;
 
-    public CategoryRestController(ICategoryServicePort categoryServicePort, CategoryResponseMapper categoryResponseMapper, CategoryRequestMapper categoryRequestMapper) {
+    public CategoryRestController(CategoryServicePort categoryServicePort, CategoryResponseMapper categoryResponseMapper, CategoryRequestMapper categoryRequestMapper) {
         this.categoryServicePort = categoryServicePort;
         this.categoryResponseMapper = categoryResponseMapper;
         this.categoryRequestMapper = categoryRequestMapper;

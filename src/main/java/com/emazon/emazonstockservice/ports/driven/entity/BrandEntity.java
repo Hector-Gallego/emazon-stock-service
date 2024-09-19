@@ -1,6 +1,6 @@
 package com.emazon.emazonstockservice.ports.driven.entity;
 
-import com.emazon.emazonstockservice.domain.util.BrandConstants;
+import com.emazon.emazonstockservice.domain.constants.BrandConstants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

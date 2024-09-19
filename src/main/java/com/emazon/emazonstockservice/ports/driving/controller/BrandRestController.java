@@ -1,9 +1,9 @@
 package com.emazon.emazonstockservice.ports.driving.controller;
 
 import com.emazon.emazonstockservice.configuration.execptionhandle.ErrorResponse;
-import com.emazon.emazonstockservice.domain.api.IBrandServicePort;
+import com.emazon.emazonstockservice.domain.api.BrandServicePort;
 import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.util.BrandConstants;
+import com.emazon.emazonstockservice.domain.constants.BrandConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.request.BrandRequestDto;
 import com.emazon.emazonstockservice.ports.driving.dto.response.BrandResponseDto;
@@ -29,15 +29,15 @@ import java.time.LocalDateTime;
 
 
 @RestController
-@RequestMapping("/api/brand/")
+@RequestMapping("/api/brand")
 public class BrandRestController {
 
-    private final IBrandServicePort brandServicePort;
+    private final BrandServicePort brandServicePort;
     private final BrandResponseMapper brandResponseMapper;
     private final BrandRequestMapper brandRequestMapper;
 
 
-    public BrandRestController(IBrandServicePort brandServicePort, BrandResponseMapper brandResponseMapper, BrandRequestMapper brandRequestMapper) {
+    public BrandRestController(BrandServicePort brandServicePort, BrandResponseMapper brandResponseMapper, BrandRequestMapper brandRequestMapper) {
         this.brandServicePort = brandServicePort;
         this.brandResponseMapper = brandResponseMapper;
         this.brandRequestMapper = brandRequestMapper;

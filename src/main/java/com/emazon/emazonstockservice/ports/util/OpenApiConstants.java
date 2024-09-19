@@ -3,6 +3,7 @@ package com.emazon.emazonstockservice.ports.util;
 public final class OpenApiConstants {
 
 
+
     private OpenApiConstants(){
         throw new IllegalStateException();
     }
@@ -59,5 +60,10 @@ public final class OpenApiConstants {
     public static final String OPENAPI_SUMMARY_LIST_ARTICLES= "List Articles";
     public static final String OPENAPI_DESCRIPTION_LIST_ARTICLES = "Retrieves a list of categories based on the provided parameters.";
     public static final String OPEN_API_LIST_ARTICLES_SUCCESS = "Successfully retrieved articles";
+
+    public static final String OPENAPI_UPDATE_STOCK_SUMMARY = "Update stock.";
+    public static final String OPENAPI_UPDATE_STOCK_DESCRIPTION = "Update stock information for a specific item.";
+    public static final String STOCK_UPDATED = "Stock updated successfully.";
+
 
 }

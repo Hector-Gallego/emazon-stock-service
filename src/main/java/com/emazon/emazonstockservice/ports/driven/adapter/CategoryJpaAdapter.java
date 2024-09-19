@@ -1,9 +1,8 @@
 package com.emazon.emazonstockservice.ports.driven.adapter;
 
 
-
 import com.emazon.emazonstockservice.domain.model.Category;
-import com.emazon.emazonstockservice.domain.spi.ICategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driven.entity.CategoryEntity;
 import com.emazon.emazonstockservice.ports.driven.mapper.CategoryEntityMapper;
@@ -15,15 +14,29 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @RequiredArgsConstructor
-public class CategoryJpaAdapter implements ICategoryPersistencePort {
+public class CategoryJpaAdapter implements CategoryPersistencePort {
 
 
     private final ICategoryRepository categoryRepository;
     private final CategoryEntityMapper categoryEntityMapper;
 
 
+    @Override
+    public Map<Long, Optional<Category>> findCategoryByIds(List<Long> categoryIds) {
+        return categoryIds.stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        id -> categoryRepository.findById(id)
+                                .map(categoryEntityMapper::toDomain)
+                ));
+    }
 
     @Override
     public void saveCategory(Category category) {

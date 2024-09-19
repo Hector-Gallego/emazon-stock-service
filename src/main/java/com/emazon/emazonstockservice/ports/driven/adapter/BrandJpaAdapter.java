@@ -1,7 +1,7 @@
 package com.emazon.emazonstockservice.ports.driven.adapter;
 
 import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.spi.IBrandPersistencePort;
+import com.emazon.emazonstockservice.domain.spi.BrandPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driven.entity.BrandEntity;
 import com.emazon.emazonstockservice.ports.driven.mapper.BrandEntityMapper;
@@ -12,7 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-public class BrandJpaAdapter implements IBrandPersistencePort {
+import java.util.Optional;
+
+public class BrandJpaAdapter implements BrandPersistencePort {
 
     private final IBrandRepository brandRepository;
     private final BrandEntityMapper brandEntityMapper;
@@ -22,6 +24,11 @@ public class BrandJpaAdapter implements IBrandPersistencePort {
         this.brandEntityMapper = brandEntityMapper;
     }
 
+
+    @Override
+    public Optional<Brand> findBrandById(Long brandId) {
+        return brandRepository.findById(brandId).map(brandEntityMapper::toDomain);
+    }
 
     @Override
     public void saveBrand(Brand brand) {

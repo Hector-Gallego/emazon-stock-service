@@ -6,9 +6,8 @@ import com.emazon.emazonstockservice.domain.util.CustomPage;
 import java.util.List;
 
 
-public interface IArticleServicePort {
+public interface ArticleServicePort {
     void saveArticle(Article article, List<Long> categoryIds, Long brandId);
     CustomPage<Article> listArticles(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
-
-
+    void addStock(Long articleId, Integer quantity);
 }

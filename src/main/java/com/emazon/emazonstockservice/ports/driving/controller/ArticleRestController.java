@@ -2,11 +2,12 @@ package com.emazon.emazonstockservice.ports.driving.controller;
 
 
 import com.emazon.emazonstockservice.configuration.execptionhandle.ErrorResponse;
-import com.emazon.emazonstockservice.domain.api.IArticleServicePort;
+import com.emazon.emazonstockservice.domain.api.ArticleServicePort;
 import com.emazon.emazonstockservice.domain.model.Article;
-import com.emazon.emazonstockservice.domain.util.ArticleConstants;
+import com.emazon.emazonstockservice.domain.constants.ArticleConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.dto.request.ArticleRequestDto;
+import com.emazon.emazonstockservice.ports.driving.dto.request.StockRequestDto;
 import com.emazon.emazonstockservice.ports.driving.dto.response.ArticleResponseDto;
 import com.emazon.emazonstockservice.ports.driving.dto.response.CustomApiResponse;
 import com.emazon.emazonstockservice.ports.driving.dto.response.GenericListResponseDto;
@@ -28,19 +29,21 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/article/")
+@RequestMapping("/api/article")
 public class ArticleRestController {
 
 
-    private final IArticleServicePort articleServicePort;
+    private final ArticleServicePort articleServicePort;
     private final ArticleRequestMapper articleRequestMapper;
     private final ArticleResponseMapper articleResponseMapper;
 
 
-    public ArticleRestController(IArticleServicePort articleServicePort, ArticleRequestMapper articleRequestMapper, ArticleResponseMapper articleResponseMapper) {
+
+    public ArticleRestController(ArticleServicePort articleServicePort, ArticleRequestMapper articleRequestMapper, ArticleResponseMapper articleResponseMapper) {
         this.articleServicePort = articleServicePort;
         this.articleRequestMapper = articleRequestMapper;
         this.articleResponseMapper = articleResponseMapper;
+
     }
 
 
@@ -124,5 +127,36 @@ public class ArticleRestController {
                 LocalDateTime.now()
         );
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    @Operation(summary = OpenApiConstants.OPENAPI_UPDATE_STOCK_SUMMARY,
+            description = OpenApiConstants.OPENAPI_UPDATE_STOCK_DESCRIPTION)
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201,
+                    description = OpenApiConstants.STOCK_UPDATED,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomApiResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PutMapping("/stock")
+    public ResponseEntity<CustomApiResponse<Void>> addStock(@RequestBody StockRequestDto stockRequestDto){
+
+        articleServicePort.addStock(stockRequestDto.getArticleId(), stockRequestDto.getQuantity());
+        CustomApiResponse<Void> response = new CustomApiResponse<>(
+                HttpStatus.OK.value(),
+                "Stock added successfully",
+                null,
+                LocalDateTime.now());
+        return ResponseEntity.ok().body(response);
+
     }
 }

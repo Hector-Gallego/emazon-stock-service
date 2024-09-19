@@ -1,7 +1,7 @@
 package com.emazon.emazonstockservice.ports.driven.entity;
 
 
-import com.emazon.emazonstockservice.domain.util.CategoryConstants;
+import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

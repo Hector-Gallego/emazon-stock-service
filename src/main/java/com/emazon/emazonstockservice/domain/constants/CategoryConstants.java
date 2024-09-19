@@ -1,4 +1,4 @@
-package com.emazon.emazonstockservice.domain.util;
+package com.emazon.emazonstockservice.domain.constants;
 
 public final class CategoryConstants {
 

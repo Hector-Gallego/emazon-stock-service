@@ -59,7 +59,6 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
             @Nullable WebRequest request) {
 
         List<String> errorList = exception
-                .getBindingResult()//la puedo eliminar
                 .getFieldErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)

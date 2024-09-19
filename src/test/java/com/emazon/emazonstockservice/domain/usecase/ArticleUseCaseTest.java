@@ -1,17 +1,20 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
 
+import com.emazon.emazonstockservice.datatest.ArticleDataTestFactory;
+import com.emazon.emazonstockservice.datatest.CustomPageDataFactory;
+import com.emazon.emazonstockservice.domain.constants.ModelNamesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.*;
 import com.emazon.emazonstockservice.domain.model.Article;
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.domain.model.Category;
-import com.emazon.emazonstockservice.domain.spi.IArticlePersistencePort;
-import com.emazon.emazonstockservice.domain.util.ArticleConstants;
-import com.emazon.emazonstockservice.domain.util.BrandConstants;
+import com.emazon.emazonstockservice.domain.spi.ArticlePersistencePort;
+import com.emazon.emazonstockservice.domain.spi.BrandPersistencePort;
+import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.constants.ArticleConstants;
+import com.emazon.emazonstockservice.domain.constants.BrandConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
-import com.emazon.emazonstockservice.domain.util.DomainsConstants;
-import com.emazon.emazonstockservice.ports.driven.entity.BrandEntity;
-import com.emazon.emazonstockservice.ports.driven.entity.CategoryEntity;
+import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +32,13 @@ import static org.mockito.Mockito.*;
 class ArticleUseCaseTest {
 
     @Mock
-    IArticlePersistencePort articlePersistencePort;
+    ArticlePersistencePort articlePersistencePort;
+
+    @Mock
+    BrandPersistencePort brandPersistencePort;
+
+    @Mock
+    CategoryPersistencePort categoryPersistencePort;
 
     @InjectMocks
     ArticleUseCase articleUseCase;
@@ -38,77 +47,52 @@ class ArticleUseCaseTest {
     @Test
     void ShouldSaveArticleWhenItDoesNotExist() {
 
-        // given
+
         List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
 
-        Set<CategoryEntity> categoryEntities = new HashSet<>();
-        Map<Long, Optional<CategoryEntity>> categoryMap = categoryIds.stream()
+        Set<Category> categories = new HashSet<>();
+
+        Map<Long, Optional<Category>> categoryMap = categoryIds.stream()
                 .collect(Collectors.toMap(
                         id -> id,
                         id -> {
-                            CategoryEntity categoryEntity = new CategoryEntity();
-                            categoryEntities.add(categoryEntity);
-                            return Optional.of(categoryEntity);
+                            Category category = new Category();
+                            categories.add(category);
+                            return Optional.of(category);
                         }
                 ));
 
         Long brandId = 1L;
-        BrandEntity brandEntity = new BrandEntity();
-        brandEntity.setId(brandId);
-        brandEntity.setName("Samsung");
+        Brand brand = new Brand();
+        brand.setId(brandId);
+        brand.setName("Samsung");
 
-        Article article = new Article(
-                1L,
-                "Samsung Galaxy S21",
-                "Smartphone con pantalla AMOLED y cámaras avanzadas.",
-                10,
-                200.0,
-                new HashSet<>(),
-                new Brand()
-        );
+        Article article = ArticleDataTestFactory.createValidArticle();
 
         when(articlePersistencePort.existByName("Samsung Galaxy S21")).thenReturn(false);
-        when(articlePersistencePort.findBrandById(brandId)).thenReturn(Optional.of(brandEntity));
-        when(articlePersistencePort.findCategoryByIds(categoryIds)).thenReturn(categoryMap);
+        when(brandPersistencePort.findBrandById(brandId)).thenReturn(Optional.of(brand));
+        when(categoryPersistencePort.findCategoryByIds(categoryIds)).thenReturn(categoryMap);
 
-        // act
+
         articleUseCase.saveArticle(article, categoryIds, brandId);
 
-        // then
-        verify(articlePersistencePort, times(1)).saveArticle(article, categoryEntities, brandEntity);
+        verify(articlePersistencePort, times(1)).saveArticle(article,categories, brand);
 
     }
 
     @Test
     void ShouldThrowExceptionWhenCategoryNameAlreadyExists() {
 
-        //given
-
-        Set<Category> categories = new HashSet<>();
-        Brand brand = new Brand();
         List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
-
-
         Long brandId = 1L;
 
-        Article article = new Article(
-                1L,
-                "Samsung Galaxy S21",
-                "Smartphone con pantalla AMOLED y cámaras avanzadas.",
-                10,
-                200.0,
-                categories,
-                brand
-        );
-
-        //when
+        Article article = ArticleDataTestFactory.createValidArticle();
         when(articlePersistencePort.existByName("Samsung Galaxy S21")).thenReturn(true);
 
-        //then
         DuplicateNameException exception = assertThrows(DuplicateNameException.class, () -> articleUseCase.saveArticle(article, categoryIds, brandId));
-        assertEquals(DomainsConstants.
+        assertEquals(ErrorMessagesConstants.
                         getDuplicateNameFieldMessage(
-                                DomainsConstants.MODEL_NAMES.ARTICLE.toString(),
+                                ModelNamesConstants.ARTICLE.toString(),
                                 article.getName()),
                 exception.getMessage());
 
@@ -116,31 +100,19 @@ class ArticleUseCaseTest {
 
     @Test
     void shouldThrowExceptionWhenCategoryIdsAreOutOfRange() {
-        // Given
-        Set<Category> categories = new HashSet<>();
+
         List<Long> tooManyCategoryIds = Arrays.asList(1L, 2L, 3L, 4L);
         List<Long> noCategoryIds = new ArrayList<>();
-        Brand brand = new Brand();
         Long brandId = 1L;
 
-        Article article = new Article(
-                1L,
-                "Samsung Galaxy S21",
-                "Smartphone con pantalla AMOLED y cámaras avanzadas.",
-                10,
-                200.0,
-                categories,
-                brand
-        );
+        Article article = ArticleDataTestFactory.createValidArticle();
 
-        // When
         InvalidCategoryCountException exceptionTooManyCategories = assertThrows(InvalidCategoryCountException.class,
                 () -> articleUseCase.saveArticle(article, tooManyCategoryIds, brandId));
 
         InvalidCategoryCountException exceptionNoCategories = assertThrows(InvalidCategoryCountException.class,
                 () -> articleUseCase.saveArticle(article, noCategoryIds, brandId));
 
-        //then
         assertEquals(ArticleConstants.CATEGORY_COUNT_OUT_OF_RANGE,
                 exceptionTooManyCategories.getMessage());
 
@@ -153,55 +125,31 @@ class ArticleUseCaseTest {
     @Test
     void ShouldThrowExceptionWhenNameIsEmpty() {
 
-        //given
-        Set<Category> categories = new HashSet<>();
-        Brand brand = new Brand();
         Long brandId = 1L;
-
         List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
-        Article article = new Article(
-                1L,
-                "",
-                "Televisor con tecnología Quantum Dot para una calidad de imagen superior.",
-                10,
-                200.0,
-                categories,
-                brand
-        );
 
-        //then
+        Article article = ArticleDataTestFactory.createArticleWithInvalidName();
+
         FieldEmptyException exception = assertThrows(FieldEmptyException.class,
                 () -> articleUseCase.saveArticle(article, categoryIds, brandId));
 
-        assertEquals(DomainsConstants.NAME_CANNOT_BE_EMPTY, exception.getMessage());
+        assertEquals(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY, exception.getMessage());
 
     }
 
     @Test
     void ShouldThrowExceptionWhenDescriptionIsEmpty() {
 
-        //given
-        Set<Category> categories = new HashSet<>();
-        Brand brand = new Brand();
+
         Long brandId = 1L;
-
-
         List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
-        Article article = new Article(
-                1L,
-                "Samsung LED TV",
-                "",
-                10,
-                200.0,
-                categories,
-                brand
-        );
 
-        //then
+        Article article = ArticleDataTestFactory.createArticleWithInvalidDescription();
+
         FieldEmptyException exception = assertThrows(FieldEmptyException.class,
                 () -> articleUseCase.saveArticle(article, categoryIds, brandId));
 
-        assertEquals(DomainsConstants.DESCRIPTION_CANNOT_BE_EMPTY, exception.getMessage());
+        assertEquals(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY, exception.getMessage());
 
     }
 
@@ -209,22 +157,12 @@ class ArticleUseCaseTest {
     @Test
     void shouldThrowExceptionWhenQuantityIsNegative() {
 
-        //given
-        Set<Category> categories = new HashSet<>();
-        Brand brand = new Brand();
+
         Long brandId = 1L;
 
         List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
-        Article article = new Article(
-                1L,
-                "Samsung Galaxy Note 20",
-                "Smartphone con lápiz óptico y alto rendimiento.",
-                -10,
-                200.0,
-                categories,
-                brand
-        );
-        //then
+        Article article = ArticleDataTestFactory.createArticleWithQuantityIsNegative();
+
         InvalidValuesException exception = assertThrows(InvalidValuesException.class,
                 () -> articleUseCase.saveArticle(article, categoryIds, brandId));
 
@@ -238,24 +176,12 @@ class ArticleUseCaseTest {
     @Test
     void shouldThrowExceptionWhenPriceIsNegative() {
 
-        //given
-        Set<Category> categories = new HashSet<>();
-        Brand brand = new Brand();
+
         Long brandId = 1L;
-
-        // Caso con más de 3 categorías
         List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
-        Article article = new Article(
-                1L,
-                "Samsung Galaxy Note 20",
-                "Smartphone con lápiz óptico y alto rendimiento.",
-                10,
-                -200.0,
-                categories,
-                brand
-        );
+        Article article = ArticleDataTestFactory.createArticleWithPriceIsNegative();
 
-        //then
+
         InvalidValuesException exception = assertThrows(InvalidValuesException.class,
                 () -> articleUseCase.saveArticle(article, categoryIds, brandId));
 
@@ -268,22 +194,12 @@ class ArticleUseCaseTest {
     @Test
     void shouldThrowExceptionWhenCategoryIsDuplicated() {
 
-        //given
-        Set<Category> categories = new HashSet<>();
-        Brand brand = new Brand();
+
         Long brandId = 1L;
 
         List<Long> categoryIds = Arrays.asList(2L, 2L, 3L);
-        Article article = new Article(
-                1L,
-                "Samsung Galaxy Note 20",
-                "Smartphone con lápiz óptico y alto rendimiento.",
-                10,
-                200.0,
-                categories,
-                brand
-        );
-        //then
+        Article article = ArticleDataTestFactory.createValidArticle();
+
         DuplicateCategoryException exception = assertThrows(DuplicateCategoryException.class,
                 () -> articleUseCase.saveArticle(article, categoryIds, brandId));
 
@@ -293,23 +209,15 @@ class ArticleUseCaseTest {
 
     @Test
     void shouldThrowExceptionWhenBrandNotFound() {
-        // Given
-        Article article = new Article(
-                1L,
-                "Samsung Galaxy S21",
-                "Smartphone con pantalla AMOLED y cámaras avanzadas.",
-                10,
-                200.0,
-                new HashSet<>(),
-                null
-        );
-        List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
+
         Long brandId = 1L;
+        List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
+
+        Article article = ArticleDataTestFactory.createValidArticle();
+
+        when(brandPersistencePort.findBrandById(brandId)).thenReturn(Optional.empty());
 
 
-        when(articlePersistencePort.findBrandById(brandId)).thenReturn(Optional.empty());
-
-        // When & Then
         DataNotFoundException exception = assertThrows(DataNotFoundException.class,
                 () -> articleUseCase.saveArticle(article, categoryIds, brandId));
 
@@ -325,15 +233,7 @@ class ArticleUseCaseTest {
         String sortBy = "name";
         String sortDirection = "asc";
 
-        CustomPage<Article> customPage = new CustomPage.Builder<Article>()
-                .content(new ArrayList<>())
-                .pageNumber(1)
-                .pageSize(10)
-                .totalElements(5L)
-                .totalPages(5)
-                .first(true)
-                .last(false)
-                .build();
+        CustomPage<Article> customPage = CustomPageDataFactory.createCustomPageWithParametersAreValid();
 
         // when
         when(articlePersistencePort.findAll(pageNumber, pageSize, sortBy, sortDirection)).thenReturn(customPage);
@@ -347,22 +247,21 @@ class ArticleUseCaseTest {
 
     @Test
     void shouldThrowExceptionWhenParametersAreInvalid() {
-        // given
+
         Integer pageNumber = -1;
         Integer pageSize = -1;
         String sortBy = "";
         String sortDirection = "ascendente";
 
-        // when & then
         InvalidParameterPaginationException exception = assertThrows(InvalidParameterPaginationException.class, () -> articleUseCase.listArticles(pageNumber, pageSize, sortBy, sortDirection));
 
-        assertEquals(DomainsConstants.INVALID_PARAMETERS_MESSAGE, exception.getMessage());
+        assertEquals(ErrorMessagesConstants.INVALID_PARAMETERS_MESSAGE, exception.getMessage());
 
         List<String> expectedErrors = List.of(
-                DomainsConstants.INVALID_PAGE_NO,
-                DomainsConstants.INVALID_PAGE_SIZE,
-                DomainsConstants.INVALID_SORT_DIRECTION,
-                DomainsConstants.INVALID_SORT_BY
+                ErrorMessagesConstants.INVALID_PAGE_NO,
+                ErrorMessagesConstants.INVALID_PAGE_SIZE,
+                ErrorMessagesConstants.INVALID_SORT_DIRECTION,
+                ErrorMessagesConstants.INVALID_SORT_BY
 
         );
 

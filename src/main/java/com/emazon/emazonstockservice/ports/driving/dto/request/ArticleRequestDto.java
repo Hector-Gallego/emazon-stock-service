@@ -1,8 +1,8 @@
 package com.emazon.emazonstockservice.ports.driving.dto.request;
 
 
-import com.emazon.emazonstockservice.domain.util.BrandConstants;
-import com.emazon.emazonstockservice.domain.util.CategoryConstants;
+import com.emazon.emazonstockservice.domain.constants.BrandConstants;
+import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
 import com.emazon.emazonstockservice.ports.util.PortsConstants;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
