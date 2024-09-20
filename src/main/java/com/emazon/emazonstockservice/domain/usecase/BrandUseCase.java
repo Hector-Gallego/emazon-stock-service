@@ -1,6 +1,7 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
 import com.emazon.emazonstockservice.domain.api.BrandServicePort;
+import com.emazon.emazonstockservice.domain.constants.BrandConstants;
 import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
 import com.emazon.emazonstockservice.domain.constants.ModelNamesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
@@ -12,8 +13,6 @@ import com.emazon.emazonstockservice.domain.validator.PaginationValidator;
 
 public class BrandUseCase implements BrandServicePort {
 
-    private static final int MAX_NAME_LENGTH = 50;
-    private static final int MAX_DESCRIPTION_LENGTH = 120;
 
     private final BrandPersistencePort brandPersistencePort;
 
@@ -26,9 +25,9 @@ public class BrandUseCase implements BrandServicePort {
 
         FieldValidator.validateNameAndDescription(
                 brand.getName(),
-                MAX_NAME_LENGTH,
+                BrandConstants.MAX_BRAND_NAME_LENGTH,
                 brand.getDescription(),
-                MAX_DESCRIPTION_LENGTH
+                BrandConstants.MAX_BRAND_DESCRIPTION_LENGTH
         );
 
         if (brandPersistencePort.existsByName(brand.getName())) {

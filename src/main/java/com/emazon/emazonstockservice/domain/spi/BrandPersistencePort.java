@@ -2,7 +2,6 @@ package com.emazon.emazonstockservice.domain.spi;
 
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
-import com.emazon.emazonstockservice.ports.driven.entity.BrandEntity;
 
 import java.util.Optional;
 

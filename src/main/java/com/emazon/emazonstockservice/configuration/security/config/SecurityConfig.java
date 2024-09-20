@@ -38,8 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,
                                 ApiEndPointsConstants.API_STOCK_URI)
                         .hasAnyAuthority(
-                                RoleNameConstants.WAREHOUSE_ASSISTANT,
-                                RoleNameConstants.ADMIN)
+                                RoleNameConstants.WAREHOUSE_ASSISTANT)
 
                         .requestMatchers(HttpMethod.POST,
                                 ApiEndPointsConstants.API_CATEGORY_URI,

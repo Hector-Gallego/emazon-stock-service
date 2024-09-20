@@ -52,7 +52,7 @@ public final class ArticleValidator {
 
     public static void  validateName(String name){
         if (name == null || name.isBlank()){
-            throw new FieldEmptyException(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY);
+            throw new FieldEmptyException(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY_ERROR_MESSAGE);
         }
     }
 
@@ -65,7 +65,7 @@ public final class ArticleValidator {
     public static void validateDescription(String description){
 
         if (description == null || description.isBlank()){
-            throw new FieldEmptyException(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY);
+            throw new FieldEmptyException(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY_ERROR_MESSAGE);
         }
 
 

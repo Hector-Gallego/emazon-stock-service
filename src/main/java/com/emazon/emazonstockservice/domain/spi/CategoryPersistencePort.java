@@ -2,7 +2,6 @@ package com.emazon.emazonstockservice.domain.spi;
 
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
-import com.emazon.emazonstockservice.ports.driven.entity.CategoryEntity;
 
 import java.util.List;
 import java.util.Map;

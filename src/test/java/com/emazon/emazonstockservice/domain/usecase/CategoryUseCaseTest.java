@@ -76,7 +76,7 @@ class CategoryUseCaseTest {
         FieldLimitExceededException exception = assertThrows(FieldLimitExceededException.class, () -> categoryUseCase.saveCategory(category));
 
         assertEquals(String.format(
-                ErrorMessagesConstants.MAX_NAME_LENGTH_MESSAGE,
+                ErrorMessagesConstants.MAX_NAME_LENGTH_ERROR_MESSAGE,
                 CategoryConstants.MAX_CATEGORY_NAME_LENGTH), exception.getMessage());
 
 
@@ -92,7 +92,7 @@ class CategoryUseCaseTest {
         FieldEmptyException exception = assertThrows(FieldEmptyException.class,
                 () -> categoryUseCase.saveCategory(category));
 
-        assertEquals(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY, exception.getMessage());
+        assertEquals(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY_ERROR_MESSAGE, exception.getMessage());
 
     }
 
@@ -103,7 +103,7 @@ class CategoryUseCaseTest {
 
         FieldEmptyException exception = assertThrows(FieldEmptyException.class, () -> categoryUseCase.saveCategory(category));
 
-        assertEquals(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY, exception.getMessage());
+        assertEquals(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY_ERROR_MESSAGE, exception.getMessage());
 
     }
 
@@ -118,7 +118,7 @@ class CategoryUseCaseTest {
                 FieldLimitExceededException.class, () -> categoryUseCase.saveCategory(category));
 
         assertEquals(String.format(
-                ErrorMessagesConstants.MAX_DESCRIPTION_LENGTH_MESSAGE,
+                ErrorMessagesConstants.MAX_DESCRIPTION_LENGTH_ERROR_MESSAGE,
                 CategoryConstants.MAX_CATEGORY_DESCRIPTION_LENGTH), exception.getMessage());
 
 
@@ -150,13 +150,13 @@ class CategoryUseCaseTest {
         // when & then
         InvalidParameterPaginationException exception = assertThrows(InvalidParameterPaginationException.class, () -> categoryUseCase.listCategories(pageNumber, pageSize, sortBy, sortDirection));
 
-        assertEquals(ErrorMessagesConstants.INVALID_PARAMETERS_MESSAGE, exception.getMessage());
+        assertEquals(ErrorMessagesConstants.INVALID_PARAMETERS_ERROR_MESSAGE, exception.getMessage());
 
         List<String> expectedErrors = List.of(
-                ErrorMessagesConstants.INVALID_PAGE_NO,
-                ErrorMessagesConstants.INVALID_PAGE_SIZE,
-                ErrorMessagesConstants.INVALID_SORT_DIRECTION,
-                ErrorMessagesConstants.INVALID_SORT_BY
+                ErrorMessagesConstants.INVALID_PAGE_NO_ERROR_MESSAGE,
+                ErrorMessagesConstants.INVALID_PAGE_SIZE_ERROR_MESSAGE,
+                ErrorMessagesConstants.INVALID_SORT_DIRECTION_ERROR_MESSAGE,
+                ErrorMessagesConstants.INVALID_SORT_BY_ERROR_MESSAGE
 
         );
 

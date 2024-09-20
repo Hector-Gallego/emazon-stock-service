@@ -133,7 +133,7 @@ class ArticleUseCaseTest {
         FieldEmptyException exception = assertThrows(FieldEmptyException.class,
                 () -> articleUseCase.saveArticle(article, categoryIds, brandId));
 
-        assertEquals(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY, exception.getMessage());
+        assertEquals(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY_ERROR_MESSAGE, exception.getMessage());
 
     }
 
@@ -149,7 +149,7 @@ class ArticleUseCaseTest {
         FieldEmptyException exception = assertThrows(FieldEmptyException.class,
                 () -> articleUseCase.saveArticle(article, categoryIds, brandId));
 
-        assertEquals(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY, exception.getMessage());
+        assertEquals(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY_ERROR_MESSAGE, exception.getMessage());
 
     }
 
@@ -227,7 +227,7 @@ class ArticleUseCaseTest {
     @Test
     void ShouldReturnArticlesWhenParametersAreValid() {
 
-        // given
+
         Integer pageNumber = 1;
         Integer pageSize = 10;
         String sortBy = "name";
@@ -235,11 +235,11 @@ class ArticleUseCaseTest {
 
         CustomPage<Article> customPage = CustomPageDataFactory.createCustomPageWithParametersAreValid();
 
-        // when
+
         when(articlePersistencePort.findAll(pageNumber, pageSize, sortBy, sortDirection)).thenReturn(customPage);
-        //act
+
         CustomPage<Article> result = articleUseCase.listArticles(pageNumber, pageSize, sortBy, sortDirection);
-        // then
+
         assertEquals(customPage, result);
 
 
@@ -255,17 +255,50 @@ class ArticleUseCaseTest {
 
         InvalidParameterPaginationException exception = assertThrows(InvalidParameterPaginationException.class, () -> articleUseCase.listArticles(pageNumber, pageSize, sortBy, sortDirection));
 
-        assertEquals(ErrorMessagesConstants.INVALID_PARAMETERS_MESSAGE, exception.getMessage());
+        assertEquals(ErrorMessagesConstants.INVALID_PARAMETERS_ERROR_MESSAGE, exception.getMessage());
 
         List<String> expectedErrors = List.of(
-                ErrorMessagesConstants.INVALID_PAGE_NO,
-                ErrorMessagesConstants.INVALID_PAGE_SIZE,
-                ErrorMessagesConstants.INVALID_SORT_DIRECTION,
-                ErrorMessagesConstants.INVALID_SORT_BY
+                ErrorMessagesConstants.INVALID_PAGE_NO_ERROR_MESSAGE,
+                ErrorMessagesConstants.INVALID_PAGE_SIZE_ERROR_MESSAGE,
+                ErrorMessagesConstants.INVALID_SORT_DIRECTION_ERROR_MESSAGE,
+                ErrorMessagesConstants.INVALID_SORT_BY_ERROR_MESSAGE
 
         );
 
         assertEquals(expectedErrors, exception.getErrors());
+    }
+
+    @Test
+    void shouldUpdateStockWhenArticleExists(){
+
+        Long articleId = 1L;
+        Integer quantity = 10;
+
+        when(articlePersistencePort.findArticleById(articleId)).thenReturn(Optional.of(new Article()));
+
+        articleUseCase.addStock(articleId, quantity);
+
+        verify(articlePersistencePort).findArticleById(articleId);
+        verify(articlePersistencePort).addStock(articleId, quantity);
+
+    }
+
+    @Test
+    void shouldThrowDataNotFoundExceptionWhenArticleDoesNotExist(){
+        Long articleId = 1L;
+        Integer quantity = 10;
+
+
+        when(articlePersistencePort.findArticleById(articleId)).thenReturn(Optional.empty());
+
+        DataNotFoundException exception = assertThrows(
+                DataNotFoundException.class,
+                () -> articleUseCase.addStock(articleId, quantity)
+        );
+
+        assertEquals(String.format(ErrorMessagesConstants.ARTICLE_NOT_FOUND, articleId), exception.getMessage());
+
+        verify(articlePersistencePort, never()).addStock(articleId, quantity);
     }
 
 

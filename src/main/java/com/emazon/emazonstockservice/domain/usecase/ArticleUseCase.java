@@ -62,12 +62,12 @@ public class ArticleUseCase implements ArticleServicePort {
     }
 
     @Override
-    public CustomPage<Article> listArticles(Integer pageNo, Integer pageSize, String sortBy, String sortDirection) {
+    public CustomPage<Article> listArticles(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection) {
 
-        PaginationValidator.validatePaginationParameters(pageNo, pageSize, sortDirection, sortBy);
+        PaginationValidator.validatePaginationParameters(pageNumber, pageSize, sortDirection, sortBy);
         PaginationValidator.validateArticleSortOptionParameters(sortBy);
 
-        return articlePersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection);
+        return articlePersistencePort.findAll(pageNumber, pageSize, sortBy, sortDirection);
 
     }
 
@@ -79,7 +79,7 @@ public class ArticleUseCase implements ArticleServicePort {
                         ErrorMessagesConstants.ARTICLE_NOT_FOUND,
                         articleId))
         );
-        articlePersistencePort.AddStock(articleId, quantity);
+        articlePersistencePort.addStock(articleId, quantity);
     }
 
 }

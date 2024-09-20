@@ -12,32 +12,32 @@ public class FieldValidator {
 
     public static void validateName(String name, int maxNameLength) {
         if (name == null) {
-            throw new FieldEmptyException(ErrorMessagesConstants.NAME_CANNOT_BE_NULL);
+            throw new FieldEmptyException(ErrorMessagesConstants.NAME_CANNOT_BE_NULL_ERROR_MESSAGE);
         }
 
         if (name.isBlank()) {
-            throw new FieldEmptyException(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY);
+            throw new FieldEmptyException(ErrorMessagesConstants.NAME_CANNOT_BE_EMPTY_ERROR_MESSAGE);
         }
 
         if (name.length() > maxNameLength) {
             throw new FieldLimitExceededException(
-                    String.format(ErrorMessagesConstants.MAX_NAME_LENGTH_MESSAGE, maxNameLength)
+                    String.format(ErrorMessagesConstants.MAX_NAME_LENGTH_ERROR_MESSAGE, maxNameLength)
             );
         }
     }
 
     public static void validateDescription(String description, int maxDescriptionLength) {
         if (description == null) {
-            throw new FieldEmptyException(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_NULL);
+            throw new FieldEmptyException(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_NULL_ERROR_MESSAGE);
         }
 
         if (description.isBlank()) {
-            throw new FieldEmptyException(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY);
+            throw new FieldEmptyException(ErrorMessagesConstants.DESCRIPTION_CANNOT_BE_EMPTY_ERROR_MESSAGE);
         }
 
         if (description.length() > maxDescriptionLength) {
             throw new FieldLimitExceededException(
-                    String.format(ErrorMessagesConstants.MAX_DESCRIPTION_LENGTH_MESSAGE, maxDescriptionLength)
+                    String.format(ErrorMessagesConstants.MAX_DESCRIPTION_LENGTH_ERROR_MESSAGE, maxDescriptionLength)
             );
         }
     }

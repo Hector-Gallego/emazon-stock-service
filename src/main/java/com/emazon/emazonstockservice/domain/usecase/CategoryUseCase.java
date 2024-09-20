@@ -1,6 +1,7 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
 import com.emazon.emazonstockservice.domain.api.CategoryServicePort;
+import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
 import com.emazon.emazonstockservice.domain.constants.ModelNamesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.model.Category;
@@ -14,8 +15,7 @@ import com.emazon.emazonstockservice.domain.validator.PaginationValidator;
 
 public class CategoryUseCase implements CategoryServicePort {
 
-    private static final int MAX_NAME_LENGTH = 50;
-    private static final int MAX_DESCRIPTION_LENGTH = 90;
+
 
     private final CategoryPersistencePort categoryPersistencePort;
 
@@ -29,9 +29,9 @@ public class CategoryUseCase implements CategoryServicePort {
 
         FieldValidator.validateNameAndDescription(
                 category.getName(),
-                MAX_NAME_LENGTH,
+                CategoryConstants.MAX_CATEGORY_NAME_LENGTH,
                 category.getDescription(),
-                MAX_DESCRIPTION_LENGTH
+                CategoryConstants.MAX_CATEGORY_DESCRIPTION_LENGTH
         );
 
         if (categoryPersistencePort.existsByName(category.getName())) {

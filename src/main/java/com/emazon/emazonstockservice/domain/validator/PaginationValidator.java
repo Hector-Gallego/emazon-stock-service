@@ -1,8 +1,9 @@
 package com.emazon.emazonstockservice.domain.validator;
 
 import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
+import com.emazon.emazonstockservice.domain.constants.PaginationConstants;
 import com.emazon.emazonstockservice.domain.exceptions.InvalidParameterPaginationException;
-import com.emazon.emazonstockservice.ports.util.ArticleSortOptions;
+import com.emazon.emazonstockservice.ports.driven.mysql.sortutils.ArticleSortOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,34 +20,31 @@ public class PaginationValidator {
         try {
             ArticleSortOptions.valueOf(sortBy.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidParameterPaginationException(ErrorMessagesConstants.INVALID_SORT_BY + " : " + sortBy, Collections.emptyList());
+            throw new InvalidParameterPaginationException(ErrorMessagesConstants.INVALID_SORT_BY_ERROR_MESSAGE + sortBy, Collections.emptyList());
         }
-
-
-
-
     }
-    public static void validatePaginationParameters(Integer pageNo, Integer pageSize, String sortDirection, String sortBy) {
+    public static void validatePaginationParameters(Integer pageNumber, Integer pageSize, String sortDirection, String sortBy) {
         List<String> errors = new ArrayList<>();
 
-        if (pageNo == null || pageNo < 0) {
-            errors.add(ErrorMessagesConstants.INVALID_PAGE_NO);
+        if (pageNumber == null || pageNumber < PaginationConstants.MIN_PAGE_NUMBER_VALUE) {
+            errors.add(ErrorMessagesConstants.INVALID_PAGE_NO_ERROR_MESSAGE);
         }
 
-        if (pageSize == null || pageSize <= 0) {
-            errors.add(ErrorMessagesConstants.INVALID_PAGE_SIZE);
+        if (pageSize == null || pageSize <= PaginationConstants.MIN_PAGE_SIZE_VALUE) {
+            errors.add(ErrorMessagesConstants.INVALID_PAGE_SIZE_ERROR_MESSAGE);
         }
 
-        if (sortDirection == null || (!sortDirection.equalsIgnoreCase("asc") && !sortDirection.equalsIgnoreCase("desc"))) {
-            errors.add(ErrorMessagesConstants.INVALID_SORT_DIRECTION);
+        if (sortDirection == null || (!sortDirection.equalsIgnoreCase(PaginationConstants.SORT_DIRECTION_ASC)
+                && !sortDirection.equalsIgnoreCase(PaginationConstants.SORT_DIRECTION_DESC))) {
+            errors.add(ErrorMessagesConstants.INVALID_SORT_DIRECTION_ERROR_MESSAGE);
         }
 
         if (sortBy == null || sortBy.isEmpty()) {
-            errors.add(ErrorMessagesConstants.INVALID_SORT_BY);
+            errors.add(ErrorMessagesConstants.INVALID_SORT_BY_ERROR_MESSAGE);
         }
 
         if (!errors.isEmpty()) {
-            throw new InvalidParameterPaginationException(ErrorMessagesConstants.INVALID_PARAMETERS_MESSAGE, errors);
+            throw new InvalidParameterPaginationException(ErrorMessagesConstants.INVALID_PARAMETERS_ERROR_MESSAGE, errors);
         }
     }
 

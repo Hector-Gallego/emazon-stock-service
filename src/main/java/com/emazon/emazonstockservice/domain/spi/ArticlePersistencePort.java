@@ -12,6 +12,6 @@ public interface ArticlePersistencePort {
     void saveArticle (Article article, Set<Category> categories, Brand brand);
     boolean existByName(String name);
     CustomPage<Article> findAll(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
-    void AddStock(Long articleId, Integer quantity);
+    void addStock(Long articleId, Integer quantity);
     Optional<Article> findArticleById(Long articleId);
 }
