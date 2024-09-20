@@ -1,24 +1,24 @@
 package com.emazon.emazonstockservice.configuration.beans;
 
 
-import com.emazon.emazonstockservice.domain.api.IArticleServicePort;
-import com.emazon.emazonstockservice.domain.api.IBrandServicePort;
-import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
-import com.emazon.emazonstockservice.domain.spi.IArticlePersistencePort;
-import com.emazon.emazonstockservice.domain.spi.IBrandPersistencePort;
-import com.emazon.emazonstockservice.domain.spi.ICategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.api.ArticleServicePort;
+import com.emazon.emazonstockservice.domain.api.BrandServicePort;
+import com.emazon.emazonstockservice.domain.api.CategoryServicePort;
+import com.emazon.emazonstockservice.domain.spi.ArticlePersistencePort;
+import com.emazon.emazonstockservice.domain.spi.BrandPersistencePort;
+import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.usecase.ArticleUseCase;
 import com.emazon.emazonstockservice.domain.usecase.BrandUseCase;
 import com.emazon.emazonstockservice.domain.usecase.CategoryUseCase;
-import com.emazon.emazonstockservice.ports.driven.adapter.ArticleJpaAdapter;
-import com.emazon.emazonstockservice.ports.driven.adapter.BrandJpaAdapter;
-import com.emazon.emazonstockservice.ports.driven.adapter.CategoryJpaAdapter;
-import com.emazon.emazonstockservice.ports.driven.mapper.BrandEntityMapper;
-import com.emazon.emazonstockservice.ports.driven.mapper.CategoryEntityMapper;
-import com.emazon.emazonstockservice.ports.driven.mapper.ArticleEntityMapper;
-import com.emazon.emazonstockservice.ports.driven.repository.IArticleRepository;
-import com.emazon.emazonstockservice.ports.driven.repository.IBrandRepository;
-import com.emazon.emazonstockservice.ports.driven.repository.ICategoryRepository;
+import com.emazon.emazonstockservice.ports.driven.mysql.adapter.ArticleJpaAdapter;
+import com.emazon.emazonstockservice.ports.driven.mysql.adapter.BrandJpaAdapter;
+import com.emazon.emazonstockservice.ports.driven.mysql.adapter.CategoryJpaAdapter;
+import com.emazon.emazonstockservice.ports.driven.mysql.mapper.BrandEntityMapper;
+import com.emazon.emazonstockservice.ports.driven.mysql.mapper.CategoryEntityMapper;
+import com.emazon.emazonstockservice.ports.driven.mysql.mapper.ArticleEntityMapper;
+import com.emazon.emazonstockservice.ports.driven.mysql.repository.IArticleRepository;
+import com.emazon.emazonstockservice.ports.driven.mysql.repository.IBrandRepository;
+import com.emazon.emazonstockservice.ports.driven.mysql.repository.ICategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,35 +40,35 @@ public class BeanConfiguration {
 
 
     @Bean
-    public IArticlePersistencePort articlePersistencePort(){
-        return new ArticleJpaAdapter(categoryRepository, articleRepository, brandRepository, articleEntityMapper);
+    public ArticlePersistencePort articlePersistencePort(){
+        return new ArticleJpaAdapter( articleRepository, articleEntityMapper, brandEntityMapper, categoryEntityMapper);
     }
 
 
     @Bean
-    public IArticleServicePort articleServicePort(IArticlePersistencePort articlePersistencePort){
-        return new ArticleUseCase(articlePersistencePort);
+    public ArticleServicePort articleServicePort(ArticlePersistencePort articlePersistencePort, CategoryPersistencePort categoryPersistencePort, BrandPersistencePort brandPersistencePort){
+        return new ArticleUseCase(articlePersistencePort, categoryPersistencePort, brandPersistencePort);
     }
 
     @Bean
-    public ICategoryPersistencePort categoryPersistencePort(){
+    public CategoryPersistencePort categoryPersistencePort(){
 
         return new CategoryJpaAdapter(categoryRepository, categoryEntityMapper);
     }
 
     @Bean
-    public ICategoryServicePort categoryServicePort(ICategoryPersistencePort categoryPersistencePort)
+    public CategoryServicePort categoryServicePort(CategoryPersistencePort categoryPersistencePort)
     {
         return new CategoryUseCase(categoryPersistencePort);
     }
 
     @Bean
-    IBrandPersistencePort brandPersistencePort(){
+    BrandPersistencePort brandPersistencePort(){
         return new BrandJpaAdapter(brandRepository, brandEntityMapper);
     }
 
     @Bean
-    IBrandServicePort brandServicePort(IBrandPersistencePort brandPersistencePort){
+    BrandServicePort brandServicePort(BrandPersistencePort brandPersistencePort){
         return new BrandUseCase(brandPersistencePort);
     }
 

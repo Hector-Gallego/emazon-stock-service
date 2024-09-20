@@ -1,0 +1,28 @@
+package com.emazon.emazonstockservice.ports.driven.mysql.entity;
+
+import com.emazon.emazonstockservice.domain.constants.BrandConstants;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@Entity
+@Table(name = "brand")
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+public class BrandEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+
+    @Column(unique = true, nullable = false, length = BrandConstants.MAX_BRAND_NAME_LENGTH)
+    private String name;
+    @Column(nullable = false, length = BrandConstants.MAX_BRAND_DESCRIPTION_LENGTH)
+    private String description;
+}

@@ -1,5 +1,7 @@
 package com.emazon.emazonstockservice.domain.model;
 
+
+
 public class Category {
 
     private Long id;
@@ -39,4 +41,5 @@ public class Category {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

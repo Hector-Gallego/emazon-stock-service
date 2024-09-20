@@ -1,24 +1,25 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
-import com.emazon.emazonstockservice.domain.api.ICategoryServicePort;
+import com.emazon.emazonstockservice.domain.api.CategoryServicePort;
+import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
+import com.emazon.emazonstockservice.domain.constants.ModelNamesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.model.Category;
-import com.emazon.emazonstockservice.domain.spi.ICategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
-import com.emazon.emazonstockservice.domain.util.DomainsConstants;
-import com.emazon.emazonstockservice.domain.util.FieldValidator;
-import com.emazon.emazonstockservice.domain.util.PaginationValidator;
+import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
+import com.emazon.emazonstockservice.domain.validator.FieldValidator;
+import com.emazon.emazonstockservice.domain.validator.PaginationValidator;
 
 
 
-public class CategoryUseCase implements ICategoryServicePort {
+public class CategoryUseCase implements CategoryServicePort {
 
-    private static final int MAX_NAME_LENGTH = 50;
-    private static final int MAX_DESCRIPTION_LENGTH = 90;
 
-    private final ICategoryPersistencePort categoryPersistencePort;
 
-    public CategoryUseCase(ICategoryPersistencePort categoryPersistencePort) {
+    private final CategoryPersistencePort categoryPersistencePort;
+
+    public CategoryUseCase(CategoryPersistencePort categoryPersistencePort) {
         this.categoryPersistencePort = categoryPersistencePort;
     }
 
@@ -28,13 +29,13 @@ public class CategoryUseCase implements ICategoryServicePort {
 
         FieldValidator.validateNameAndDescription(
                 category.getName(),
-                MAX_NAME_LENGTH,
+                CategoryConstants.MAX_CATEGORY_NAME_LENGTH,
                 category.getDescription(),
-                MAX_DESCRIPTION_LENGTH
+                CategoryConstants.MAX_CATEGORY_DESCRIPTION_LENGTH
         );
 
         if (categoryPersistencePort.existsByName(category.getName())) {
-            throw new DuplicateNameException(DomainsConstants.getDuplicateNameFieldMessage(DomainsConstants.MODEL_NAMES.CATEGORY.toString(),category.getName()));
+            throw new DuplicateNameException(ErrorMessagesConstants.getDuplicateNameFieldMessage(ModelNamesConstants.CATEGORY.toString(),category.getName()));
         }
 
         categoryPersistencePort.saveCategory(category);

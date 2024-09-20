@@ -3,6 +3,7 @@ package com.emazon.emazonstockservice.configuration.security.config;
 
 import com.emazon.emazonstockservice.configuration.security.constants.ApiEndPointsConstants;
 import com.emazon.emazonstockservice.configuration.security.constants.RoleNameConstants;
+import com.emazon.emazonstockservice.configuration.security.constants.SecurityConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,6 +34,11 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(HttpMethod.PUT,
+                                ApiEndPointsConstants.API_STOCK_URI)
+                        .hasAnyAuthority(
+                                RoleNameConstants.WAREHOUSE_ASSISTANT)
 
                         .requestMatchers(HttpMethod.POST,
                                 ApiEndPointsConstants.API_CATEGORY_URI,
@@ -71,8 +77,8 @@ public class SecurityConfig {
     public JwtAuthenticationConverter jwtAuthenticationConverter(){
 
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(SecurityConstants.CLAIM_FIELD_NAME);
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(SecurityConstants.EMPTY_FIELD);
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
