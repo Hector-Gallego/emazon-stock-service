@@ -1,6 +1,8 @@
 package com.emazon.emazonstockservice.configuration.security.config;
 
 
+import com.emazon.emazonstockservice.configuration.exception.delegatehandle.DelegateAccessDeniedHandler;
+import com.emazon.emazonstockservice.configuration.exception.delegatehandle.DelegateAuthenticationEntryPoint;
 import com.emazon.emazonstockservice.configuration.security.constants.ApiEndPointsConstants;
 import com.emazon.emazonstockservice.configuration.security.constants.RoleNameConstants;
 import com.emazon.emazonstockservice.configuration.security.constants.SecurityConstants;
@@ -24,10 +26,15 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final RsaKeyProperties rsaKeys;
+    private final DelegateAuthenticationEntryPoint authenticationEntryPoint;
+    private final DelegateAccessDeniedHandler accessDeniedHandler;
 
-    public SecurityConfig(RsaKeyProperties rsaKeys) {
+    public SecurityConfig(RsaKeyProperties rsaKeys, DelegateAuthenticationEntryPoint authenticationEntryPoint, DelegateAccessDeniedHandler accessDeniedHandler) {
         this.rsaKeys = rsaKeys;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,10 +72,9 @@ public class SecurityConfig {
                             jwt.jwtAuthenticationConverter(jwtAuthenticationConverter());
                             jwt.decoder(jwtDecoder());
                         })
-                )
-                .exceptionHandling((exceptions) -> exceptions
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()));
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
+                );
 
         return http.build();
     }

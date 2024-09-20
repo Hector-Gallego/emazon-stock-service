@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.Nullable;
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,6 +53,11 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return buildErrorResponse(exception, HttpStatus.BAD_REQUEST, exception.getErrors());
     }
 
+
+    @ExceptionHandler(InvalidBearerTokenException.class)
+    public ResponseEntity<CustomErrorResponse> handleInvalidBearerTokenException(InvalidBearerTokenException exception) {
+        return buildErrorResponse(exception, HttpStatus.UNAUTHORIZED, Collections.emptyList());
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<CustomErrorResponse> handleAccessDeniedExceptions(AccessDeniedException exception) {
