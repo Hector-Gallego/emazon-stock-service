@@ -2,9 +2,7 @@ package com.emazon.emazonstockservice.datatest;
 
 import com.emazon.emazonstockservice.domain.model.Article;
 import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.util.CustomPage;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public class ArticleDataTestFactory {

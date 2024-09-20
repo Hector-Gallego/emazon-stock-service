@@ -3,6 +3,9 @@ package com.emazon.emazonstockservice.configuration.openapi.constants;
 public class OpenApiArticleConstants {
 
 
+    private OpenApiArticleConstants(){
+        throw new IllegalStateException();
+    }
     public static final String ARTICLE_CREATED = "Article created successfully";
     public static final String OPENAPI_SUMMARY_LIST_CATEGORIES= "List Categories";
     public static final String OPENAPI_DESCRIPTION_LIST_CATEGORIES = "Retrieves a list of categories based on the provided parameters.";

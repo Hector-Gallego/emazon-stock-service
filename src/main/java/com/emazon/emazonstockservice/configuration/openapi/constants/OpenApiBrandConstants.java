@@ -2,6 +2,9 @@ package com.emazon.emazonstockservice.configuration.openapi.constants;
 
 public class OpenApiBrandConstants {
 
+    private OpenApiBrandConstants() {
+        throw new IllegalStateException();
+    }
     public static final String BRAND_CREATED = "Brand created successfully";
     public static final String OPENAPI_CREATE_BRAND_SUMMARY = "Create a new brand";
     public static final String OPENAPI_CREATE_BRAND_DESCRIPTION = "Creates a new brand with the provided details";

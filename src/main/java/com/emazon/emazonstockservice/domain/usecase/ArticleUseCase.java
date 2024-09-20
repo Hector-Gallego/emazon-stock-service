@@ -74,11 +74,15 @@ public class ArticleUseCase implements ArticleServicePort {
     @Override
     public void addStock(Long articleId, Integer quantity) {
 
-        articlePersistencePort.findArticleById(articleId).orElseThrow(
-                () -> new DataNotFoundException(String.format(
-                        ErrorMessagesConstants.ARTICLE_NOT_FOUND,
-                        articleId))
-        );
+
+        Optional<Article> articleOptional = articlePersistencePort.findArticleById(articleId);
+
+        if(articleOptional.isEmpty()){
+            throw new DataNotFoundException(String.format(
+                    ErrorMessagesConstants.ARTICLE_NOT_FOUND,
+                    articleId));
+
+        }
         articlePersistencePort.addStock(articleId, quantity);
     }
 

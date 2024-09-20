@@ -1,6 +1,5 @@
 package com.emazon.emazonstockservice.datatest;
 
-import com.emazon.emazonstockservice.domain.model.Article;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 
 import java.util.ArrayList;
