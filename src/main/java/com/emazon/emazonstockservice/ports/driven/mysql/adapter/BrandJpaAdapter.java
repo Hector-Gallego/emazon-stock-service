@@ -1,7 +1,7 @@
 package com.emazon.emazonstockservice.ports.driven.mysql.adapter;
 
 import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.spi.BrandPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.BrandPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driven.mysql.entity.BrandEntity;
 import com.emazon.emazonstockservice.ports.driven.mysql.mapper.BrandEntityMapper;

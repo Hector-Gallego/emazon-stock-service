@@ -2,7 +2,7 @@ package com.emazon.emazonstockservice.ports.driven.mysql.adapter;
 
 
 import com.emazon.emazonstockservice.domain.model.Category;
-import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.CategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driven.mysql.entity.CategoryEntity;
 import com.emazon.emazonstockservice.ports.driven.mysql.mapper.CategoryEntityMapper;

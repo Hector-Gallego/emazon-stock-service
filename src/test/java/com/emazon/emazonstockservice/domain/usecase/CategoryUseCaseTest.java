@@ -8,7 +8,7 @@ import com.emazon.emazonstockservice.domain.exceptions.FieldEmptyException;
 import com.emazon.emazonstockservice.domain.exceptions.FieldLimitExceededException;
 import com.emazon.emazonstockservice.domain.exceptions.InvalidParameterPaginationException;
 import com.emazon.emazonstockservice.domain.model.Category;
-import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.CategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;

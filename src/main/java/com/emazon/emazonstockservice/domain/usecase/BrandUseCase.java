@@ -1,12 +1,12 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
-import com.emazon.emazonstockservice.domain.api.BrandServicePort;
+import com.emazon.emazonstockservice.domain.ports.api.BrandServicePort;
 import com.emazon.emazonstockservice.domain.constants.BrandConstants;
 import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
 import com.emazon.emazonstockservice.domain.constants.ModelNamesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.spi.BrandPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.BrandPersistencePort;
 import com.emazon.emazonstockservice.domain.util.*;
 import com.emazon.emazonstockservice.domain.validator.FieldValidator;
 import com.emazon.emazonstockservice.domain.validator.PaginationValidator;

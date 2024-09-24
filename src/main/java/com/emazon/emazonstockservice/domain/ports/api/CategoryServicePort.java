@@ -1,4 +1,4 @@
-package com.emazon.emazonstockservice.domain.api;
+package com.emazon.emazonstockservice.domain.ports.api;
 
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.util.CustomPage;

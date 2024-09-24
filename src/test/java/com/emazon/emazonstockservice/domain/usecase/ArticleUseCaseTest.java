@@ -5,12 +5,10 @@ import com.emazon.emazonstockservice.datatest.ArticleDataTestFactory;
 import com.emazon.emazonstockservice.datatest.CustomPageDataFactory;
 import com.emazon.emazonstockservice.domain.constants.ModelNamesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.*;
-import com.emazon.emazonstockservice.domain.model.Article;
-import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.model.Category;
-import com.emazon.emazonstockservice.domain.spi.ArticlePersistencePort;
-import com.emazon.emazonstockservice.domain.spi.BrandPersistencePort;
-import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.model.*;
+import com.emazon.emazonstockservice.domain.ports.spi.ArticlePersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.BrandPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.CategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.constants.ArticleConstants;
 import com.emazon.emazonstockservice.domain.constants.BrandConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
@@ -267,39 +265,5 @@ class ArticleUseCaseTest {
 
         assertEquals(expectedErrors, exception.getErrors());
     }
-
-    @Test
-    void shouldUpdateStockWhenArticleExists(){
-
-        Long articleId = 1L;
-        Integer quantity = 10;
-
-        when(articlePersistencePort.findArticleById(articleId)).thenReturn(Optional.of(new Article()));
-
-        articleUseCase.addStock(articleId, quantity);
-
-        verify(articlePersistencePort).findArticleById(articleId);
-        verify(articlePersistencePort).addStock(articleId, quantity);
-
-    }
-
-    @Test
-    void shouldThrowDataNotFoundExceptionWhenArticleDoesNotExist(){
-        Long articleId = 1L;
-        Integer quantity = 10;
-
-
-        when(articlePersistencePort.findArticleById(articleId)).thenReturn(Optional.empty());
-
-        DataNotFoundException exception = assertThrows(
-                DataNotFoundException.class,
-                () -> articleUseCase.addStock(articleId, quantity)
-        );
-
-        assertEquals(String.format(ErrorMessagesConstants.ARTICLE_NOT_FOUND, articleId), exception.getMessage());
-
-        verify(articlePersistencePort, never()).addStock(articleId, quantity);
-    }
-
 
 }

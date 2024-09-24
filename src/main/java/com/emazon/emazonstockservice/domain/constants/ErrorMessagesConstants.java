@@ -38,6 +38,7 @@ public final class ErrorMessagesConstants {
     public static final String PRICE_CANNOT_BE_NULL_ERROR_MESSAGE = "Price cannot be null";
     public static final String PRICE_MUST_BE_POSITIVE_OR_ZERO_ERROR_MESSAGE = "Price must be zero or a positive number";
     public static final String INVALID_FIELDS = "One or more fields are invalid";
+    public static final String ARTICLE_NOT_FOUND_ERROR_MESSAGE = "Article %d not found.";
 
 
     public static String getDuplicateNameFieldMessage( String field, String name) {

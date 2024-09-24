@@ -1,18 +1,22 @@
 package com.emazon.emazonstockservice.configuration.beans;
 
 
-import com.emazon.emazonstockservice.domain.api.ArticleServicePort;
-import com.emazon.emazonstockservice.domain.api.BrandServicePort;
-import com.emazon.emazonstockservice.domain.api.CategoryServicePort;
-import com.emazon.emazonstockservice.domain.spi.ArticlePersistencePort;
-import com.emazon.emazonstockservice.domain.spi.BrandPersistencePort;
-import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.api.ArticleServicePort;
+import com.emazon.emazonstockservice.domain.ports.api.BrandServicePort;
+import com.emazon.emazonstockservice.domain.ports.api.CategoryServicePort;
+import com.emazon.emazonstockservice.domain.ports.api.StockServicePort;
+import com.emazon.emazonstockservice.domain.ports.spi.ArticlePersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.BrandPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.CategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.StockPersistencePort;
 import com.emazon.emazonstockservice.domain.usecase.ArticleUseCase;
 import com.emazon.emazonstockservice.domain.usecase.BrandUseCase;
 import com.emazon.emazonstockservice.domain.usecase.CategoryUseCase;
+import com.emazon.emazonstockservice.domain.usecase.StockUseCase;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.ArticleJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.BrandJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.CategoryJpaAdapter;
+import com.emazon.emazonstockservice.ports.driven.mysql.adapter.StockJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mysql.mapper.BrandEntityMapper;
 import com.emazon.emazonstockservice.ports.driven.mysql.mapper.CategoryEntityMapper;
 import com.emazon.emazonstockservice.ports.driven.mysql.mapper.ArticleEntityMapper;
@@ -70,6 +74,16 @@ public class BeanConfiguration {
     @Bean
     BrandServicePort brandServicePort(BrandPersistencePort brandPersistencePort){
         return new BrandUseCase(brandPersistencePort);
+    }
+
+    @Bean
+    StockServicePort stockServicePort(StockPersistencePort stockPersistencePort, ArticlePersistencePort articlePersistencePort){
+        return new StockUseCase(stockPersistencePort,articlePersistencePort);
+    }
+
+    @Bean
+    StockPersistencePort stockPersistencePort(IArticleRepository articleRepository){
+        return new StockJpaAdapter(articleRepository);
     }
 
 }

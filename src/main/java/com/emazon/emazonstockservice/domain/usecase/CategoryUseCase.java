@@ -1,11 +1,11 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
-import com.emazon.emazonstockservice.domain.api.CategoryServicePort;
+import com.emazon.emazonstockservice.domain.ports.api.CategoryServicePort;
 import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
 import com.emazon.emazonstockservice.domain.constants.ModelNamesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.model.Category;
-import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.CategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
 import com.emazon.emazonstockservice.domain.validator.FieldValidator;

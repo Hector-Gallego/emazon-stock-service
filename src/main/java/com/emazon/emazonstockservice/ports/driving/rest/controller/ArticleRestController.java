@@ -3,19 +3,18 @@ package com.emazon.emazonstockservice.ports.driving.rest.controller;
 
 import com.emazon.emazonstockservice.configuration.exception.execptionhandle.CustomErrorResponse;
 import com.emazon.emazonstockservice.configuration.openapi.constants.OpenApiArticleConstants;
-import com.emazon.emazonstockservice.domain.api.ArticleServicePort;
-import com.emazon.emazonstockservice.domain.model.Article;
+import com.emazon.emazonstockservice.configuration.openapi.constants.OpenApiConstants;
 import com.emazon.emazonstockservice.domain.constants.ArticleConstants;
+import com.emazon.emazonstockservice.domain.model.Article;
+import com.emazon.emazonstockservice.domain.ports.api.ArticleServicePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.ports.driving.rest.dto.request.ArticleRequestDto;
-import com.emazon.emazonstockservice.ports.driving.rest.dto.request.StockRequestDto;
 import com.emazon.emazonstockservice.ports.driving.rest.dto.response.ArticleResponseDto;
 import com.emazon.emazonstockservice.ports.driving.rest.dto.response.CustomApiResponse;
 import com.emazon.emazonstockservice.ports.driving.rest.dto.response.GenericListResponseDto;
 import com.emazon.emazonstockservice.ports.driving.rest.mapper.ArticleRequestMapper;
 import com.emazon.emazonstockservice.ports.driving.rest.mapper.ArticleResponseMapper;
 import com.emazon.emazonstockservice.ports.driving.rest.mapper.CustomPageMapper;
-import com.emazon.emazonstockservice.configuration.openapi.constants.OpenApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -65,7 +64,7 @@ public class ArticleRestController {
                     content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
                             schema = @Schema(implementation = CustomErrorResponse.class)))
     })
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<CustomApiResponse<Void>> saveArticle(@Validated @RequestBody ArticleRequestDto articleRequestDto) {
 
 
@@ -130,34 +129,4 @@ public class ArticleRestController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-
-    @Operation(summary = OpenApiArticleConstants.OPENAPI_UPDATE_STOCK_SUMMARY,
-            description = OpenApiArticleConstants.OPENAPI_UPDATE_STOCK_DESCRIPTION)
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_201,
-                    description = OpenApiArticleConstants.STOCK_UPDATED,
-                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
-                            schema = @Schema(implementation = CustomApiResponse.class))),
-            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
-                    description = OpenApiConstants.INVALID_INPUT,
-                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
-                            schema = @Schema(implementation = CustomErrorResponse.class))),
-            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
-                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
-                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
-                            schema = @Schema(implementation = CustomErrorResponse.class)))
-    })
-    @PutMapping("/stock")
-    public ResponseEntity<CustomApiResponse<Void>> addStock(@RequestBody StockRequestDto stockRequestDto){
-
-        articleServicePort.addStock(stockRequestDto.getArticleId(), stockRequestDto.getQuantity());
-        CustomApiResponse<Void> response = new CustomApiResponse<>(
-                HttpStatus.OK.value(),
-                ArticleConstants.STOCK_ADDED_SUCCESS,
-                null,
-                LocalDateTime.now());
-        return ResponseEntity.ok().body(response);
-
-    }
 }

@@ -4,10 +4,7 @@ import com.emazon.emazonstockservice.configuration.security.exceptions.AccessDen
 import com.emazon.emazonstockservice.configuration.security.exceptions.GenericFeignException;
 import com.emazon.emazonstockservice.configuration.security.exceptions.UnauthorizedException;
 import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
-import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
-import com.emazon.emazonstockservice.domain.exceptions.FieldEmptyException;
-import com.emazon.emazonstockservice.domain.exceptions.FieldLimitExceededException;
-import com.emazon.emazonstockservice.domain.exceptions.InvalidParameterPaginationException;
+import com.emazon.emazonstockservice.domain.exceptions.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.ConcurrencyFailureException;
@@ -23,6 +20,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
@@ -75,6 +73,10 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return buildErrorResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR, Collections.emptyList());
     }
 
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<CustomErrorResponse> handleRuntimeException(ResponseStatusException exception) {
+        return buildErrorResponse(exception, HttpStatus.NOT_FOUND, Collections.emptyList());
+    }
 
 
     @Override

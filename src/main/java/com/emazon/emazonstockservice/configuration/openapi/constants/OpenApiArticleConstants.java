@@ -22,8 +22,6 @@ public class OpenApiArticleConstants {
     public static final  String SORT_BY_CATEGORY_NAME = "category_name";
 
 
-    public static final String OPENAPI_UPDATE_STOCK_SUMMARY = "Update stock.";
-    public static final String OPENAPI_UPDATE_STOCK_DESCRIPTION = "Update stock information for a specific item.";
-    public static final String STOCK_UPDATED = "Stock updated successfully.";
+
 
 }

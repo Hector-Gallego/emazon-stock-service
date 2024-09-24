@@ -8,7 +8,7 @@ import com.emazon.emazonstockservice.domain.exceptions.FieldEmptyException;
 import com.emazon.emazonstockservice.domain.exceptions.FieldLimitExceededException;
 import com.emazon.emazonstockservice.domain.exceptions.InvalidParameterPaginationException;
 import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.spi.BrandPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.BrandPersistencePort;
 import com.emazon.emazonstockservice.domain.constants.BrandConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
 import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;

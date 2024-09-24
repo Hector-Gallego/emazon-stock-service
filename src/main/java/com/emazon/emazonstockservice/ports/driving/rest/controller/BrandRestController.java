@@ -2,7 +2,7 @@ package com.emazon.emazonstockservice.ports.driving.rest.controller;
 
 import com.emazon.emazonstockservice.configuration.exception.execptionhandle.CustomErrorResponse;
 import com.emazon.emazonstockservice.configuration.openapi.constants.OpenApiBrandConstants;
-import com.emazon.emazonstockservice.domain.api.BrandServicePort;
+import com.emazon.emazonstockservice.domain.ports.api.BrandServicePort;
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.domain.constants.BrandConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;

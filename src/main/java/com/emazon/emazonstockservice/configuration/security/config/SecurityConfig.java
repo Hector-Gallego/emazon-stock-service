@@ -40,10 +40,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
 
+                        .requestMatchers(HttpMethod.POST,
+                                ApiEndPointsConstants.API_STOCK_URI)
+                        .hasAuthority(RoleNameConstants.CLIENT)
+
                         .requestMatchers(HttpMethod.PUT,
                                 ApiEndPointsConstants.API_STOCK_URI)
-                        .hasAnyAuthority(
-                                RoleNameConstants.WAREHOUSE_ASSISTANT)
+                        .hasAuthority(RoleNameConstants.WAREHOUSE_ASSISTANT)
 
                         .requestMatchers(HttpMethod.POST,
                                 ApiEndPointsConstants.API_CATEGORY_URI,

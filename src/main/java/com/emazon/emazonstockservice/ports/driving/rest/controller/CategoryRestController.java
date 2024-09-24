@@ -4,7 +4,7 @@ package com.emazon.emazonstockservice.ports.driving.rest.controller;
 import com.emazon.emazonstockservice.configuration.exception.execptionhandle.CustomErrorResponse;
 import com.emazon.emazonstockservice.configuration.openapi.constants.OpenApiArticleConstants;
 import com.emazon.emazonstockservice.configuration.openapi.constants.OpenApiCategoryConstants;
-import com.emazon.emazonstockservice.domain.api.CategoryServicePort;
+import com.emazon.emazonstockservice.domain.ports.api.CategoryServicePort;
 import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
 import com.emazon.emazonstockservice.domain.util.CustomPage;

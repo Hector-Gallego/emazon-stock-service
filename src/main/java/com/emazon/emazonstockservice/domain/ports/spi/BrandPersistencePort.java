@@ -1,4 +1,4 @@
-package com.emazon.emazonstockservice.domain.spi;
+package com.emazon.emazonstockservice.domain.ports.spi;
 
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.domain.util.CustomPage;

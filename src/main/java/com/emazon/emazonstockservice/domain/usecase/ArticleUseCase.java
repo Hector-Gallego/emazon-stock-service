@@ -1,18 +1,16 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
-import com.emazon.emazonstockservice.domain.api.ArticleServicePort;
+import com.emazon.emazonstockservice.domain.model.*;
+import com.emazon.emazonstockservice.domain.ports.api.ArticleServicePort;
 import com.emazon.emazonstockservice.domain.constants.BrandConstants;
 import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
 import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
 import com.emazon.emazonstockservice.domain.constants.ModelNamesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DataNotFoundException;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
-import com.emazon.emazonstockservice.domain.model.Article;
-import com.emazon.emazonstockservice.domain.model.Brand;
-import com.emazon.emazonstockservice.domain.model.Category;
-import com.emazon.emazonstockservice.domain.spi.ArticlePersistencePort;
-import com.emazon.emazonstockservice.domain.spi.BrandPersistencePort;
-import com.emazon.emazonstockservice.domain.spi.CategoryPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.ArticlePersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.BrandPersistencePort;
+import com.emazon.emazonstockservice.domain.ports.spi.CategoryPersistencePort;
 import com.emazon.emazonstockservice.domain.util.*;
 import com.emazon.emazonstockservice.domain.validator.ArticleValidator;
 import com.emazon.emazonstockservice.domain.validator.PaginationValidator;
@@ -66,24 +64,9 @@ public class ArticleUseCase implements ArticleServicePort {
 
         PaginationValidator.validatePaginationParameters(pageNumber, pageSize, sortDirection, sortBy);
         PaginationValidator.validateArticleSortOptionParameters(sortBy);
-
         return articlePersistencePort.findAll(pageNumber, pageSize, sortBy, sortDirection);
-
     }
 
-    @Override
-    public void addStock(Long articleId, Integer quantity) {
 
-
-        Optional<Article> articleOptional = articlePersistencePort.findArticleById(articleId);
-
-        if(articleOptional.isEmpty()){
-            throw new DataNotFoundException(String.format(
-                    ErrorMessagesConstants.ARTICLE_NOT_FOUND,
-                    articleId));
-
-        }
-        articlePersistencePort.addStock(articleId, quantity);
-    }
 
 }
