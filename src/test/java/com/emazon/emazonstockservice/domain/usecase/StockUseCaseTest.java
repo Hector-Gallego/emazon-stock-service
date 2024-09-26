@@ -7,6 +7,7 @@ import com.emazon.emazonstockservice.domain.model.StockVerificationRequest;
 import com.emazon.emazonstockservice.domain.model.StockVerificationResponse;
 import com.emazon.emazonstockservice.domain.ports.spi.ArticlePersistencePort;
 import com.emazon.emazonstockservice.domain.ports.spi.StockPersistencePort;
+import com.emazon.emazonstockservice.domain.validator.StockValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +28,9 @@ class StockUseCaseTest {
 
     @Mock
     ArticlePersistencePort articlePersistencePort;
+
+    @Mock
+    StockValidator stockValidator;
 
     @InjectMocks
     private StockUseCase stockUseCase;
@@ -75,10 +79,10 @@ class StockUseCaseTest {
         expectedResponse.setSufficientStockAvailable(true);
         expectedResponse.setCategoryLimitExceeded(false);
 
-        when(stockPersistencePort.checkStockAvailability(stockRequest)).thenReturn(expectedResponse);
+        when(stockValidator.checkStockAvailability(stockRequest)).thenReturn(expectedResponse);
         StockVerificationResponse actualResponse = stockUseCase.checkStockAvailability(stockRequest);
 
-        verify(stockPersistencePort, times(1)).checkStockAvailability(stockRequest);
+        verify(stockValidator, times(1)).checkStockAvailability(stockRequest);
         assertEquals(expectedResponse, actualResponse);
     }
 

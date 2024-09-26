@@ -13,6 +13,7 @@ import com.emazon.emazonstockservice.domain.usecase.ArticleUseCase;
 import com.emazon.emazonstockservice.domain.usecase.BrandUseCase;
 import com.emazon.emazonstockservice.domain.usecase.CategoryUseCase;
 import com.emazon.emazonstockservice.domain.usecase.StockUseCase;
+import com.emazon.emazonstockservice.domain.validator.StockValidator;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.ArticleJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.BrandJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.CategoryJpaAdapter;
@@ -77,13 +78,21 @@ public class BeanConfiguration {
     }
 
     @Bean
-    StockServicePort stockServicePort(StockPersistencePort stockPersistencePort, ArticlePersistencePort articlePersistencePort){
-        return new StockUseCase(stockPersistencePort,articlePersistencePort);
+    StockServicePort stockServicePort(StockPersistencePort stockPersistencePort,
+                                      ArticlePersistencePort articlePersistencePort,
+                                      StockValidator stockValidator){
+        return new StockUseCase(stockPersistencePort,articlePersistencePort,stockValidator);
     }
 
     @Bean
     StockPersistencePort stockPersistencePort(IArticleRepository articleRepository){
         return new StockJpaAdapter(articleRepository);
+    }
+
+
+    @Bean
+    StockValidator stockValidator(StockPersistencePort stockPersistencePort, ArticlePersistencePort articlePersistencePort){
+        return new StockValidator( stockPersistencePort, articlePersistencePort);
     }
 
 }

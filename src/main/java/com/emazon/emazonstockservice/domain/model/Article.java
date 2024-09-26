@@ -17,6 +17,12 @@ public class Article {
     public Article() {
     }
 
+    public Article(Long id, String name, Set<Category> categories) {
+        this.id = id;
+        this.name = name;
+        this.categories = categories;
+    }
+
     public Article(Long id, String name, String description, Integer quantity, Double price, Set<Category> categories, Brand brand) {
         this.id = id;
         this.name = name;
@@ -26,6 +32,7 @@ public class Article {
         this.categories = categories;
         this.brand = brand;
     }
+
 
     public Long getId() {
         return id;

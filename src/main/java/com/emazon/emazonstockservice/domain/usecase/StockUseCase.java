@@ -8,6 +8,7 @@ import com.emazon.emazonstockservice.domain.model.StockVerificationResponse;
 import com.emazon.emazonstockservice.domain.ports.api.StockServicePort;
 import com.emazon.emazonstockservice.domain.ports.spi.ArticlePersistencePort;
 import com.emazon.emazonstockservice.domain.ports.spi.StockPersistencePort;
+import com.emazon.emazonstockservice.domain.validator.StockValidator;
 
 import java.util.Optional;
 
@@ -15,10 +16,12 @@ public class StockUseCase implements StockServicePort {
 
     private final StockPersistencePort stockPersistencePort;
     private final ArticlePersistencePort articlePersistencePort;
+    private final StockValidator stockValidator;
 
-    public StockUseCase(StockPersistencePort stockPersistencePort, ArticlePersistencePort articlePersistencePort) {
+    public StockUseCase(StockPersistencePort stockPersistencePort, ArticlePersistencePort articlePersistencePort, StockValidator stockValidator) {
         this.stockPersistencePort = stockPersistencePort;
         this.articlePersistencePort = articlePersistencePort;
+        this.stockValidator = stockValidator;
     }
 
     @Override
@@ -35,8 +38,9 @@ public class StockUseCase implements StockServicePort {
 
     @Override
     public StockVerificationResponse checkStockAvailability(StockVerificationRequest stockVerificationRequest) {
-        return stockPersistencePort.checkStockAvailability(stockVerificationRequest);
 
+        return stockValidator.checkStockAvailability(stockVerificationRequest);
     }
+
 
 }
