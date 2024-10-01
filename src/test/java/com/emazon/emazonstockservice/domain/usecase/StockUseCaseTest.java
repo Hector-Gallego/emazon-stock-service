@@ -3,8 +3,8 @@ package com.emazon.emazonstockservice.domain.usecase;
 import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DataNotFoundException;
 import com.emazon.emazonstockservice.domain.model.Article;
-import com.emazon.emazonstockservice.domain.model.StockVerificationRequest;
-import com.emazon.emazonstockservice.domain.model.StockVerificationResponse;
+import com.emazon.emazonstockservice.domain.model.stock.StockVerificationRequest;
+import com.emazon.emazonstockservice.domain.model.stock.StockVerificationResponse;
 import com.emazon.emazonstockservice.domain.ports.spi.ArticlePersistencePort;
 import com.emazon.emazonstockservice.domain.ports.spi.StockPersistencePort;
 import com.emazon.emazonstockservice.domain.validator.StockValidator;
@@ -36,7 +36,7 @@ class StockUseCaseTest {
     private StockUseCase stockUseCase;
 
     @Test
-    void shouldUpdateStockWhenArticleExists(){
+    void shouldUpdateStockAndGetSaleDataWhenArticleExists(){
 
         Long articleId = 1L;
         Integer quantity = 10;

@@ -1,4 +1,4 @@
-package com.emazon.emazonstockservice.domain.model;
+package com.emazon.emazonstockservice.domain.model.stock;
 
 import java.util.List;
 

@@ -10,4 +10,6 @@ public class ValueConstants {
     public static final int INCREMENT_ONE = 1;
     public static final int MAX_CATEGORY_LIMIT_PER_ARTICLE = 3;
     public static final int MIN_DAYS_FOR_RESTOCKING_SUPPLY = 5;
+    public static final String DEFAULT_SORT_OPTION = "name";
+    public static final String SORT_BY_DESC = "desc";
 }

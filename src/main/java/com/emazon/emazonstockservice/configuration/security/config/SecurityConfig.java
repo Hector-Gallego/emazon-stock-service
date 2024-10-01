@@ -41,7 +41,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         .requestMatchers(HttpMethod.POST,
-                                ApiEndPointsConstants.API_STOCK_URI)
+                                ApiEndPointsConstants.API_STOCK_URI,
+                                ApiEndPointsConstants.API_STOCK_LIST_CART_URI)
                         .hasAuthority(RoleNameConstants.CLIENT)
 
                         .requestMatchers(HttpMethod.PUT,

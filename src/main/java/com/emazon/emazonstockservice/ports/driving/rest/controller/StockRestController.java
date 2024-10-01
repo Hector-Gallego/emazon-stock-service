@@ -4,8 +4,8 @@ import com.emazon.emazonstockservice.configuration.exception.execptionhandle.Cus
 import com.emazon.emazonstockservice.configuration.openapi.constants.OpenApiConstants;
 import com.emazon.emazonstockservice.configuration.openapi.constants.OpenApiStockConstants;
 import com.emazon.emazonstockservice.domain.constants.ArticleConstants;
-import com.emazon.emazonstockservice.domain.model.StockVerificationRequest;
-import com.emazon.emazonstockservice.domain.model.StockVerificationResponse;
+import com.emazon.emazonstockservice.domain.model.stock.*;
+import com.emazon.emazonstockservice.domain.model.stock.ArticleCart;
 import com.emazon.emazonstockservice.domain.ports.api.StockServicePort;
 import com.emazon.emazonstockservice.ports.driving.rest.dto.response.CustomApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/stock")
@@ -47,7 +48,7 @@ public class StockRestController {
                             schema = @Schema(implementation = CustomErrorResponse.class)))
     })
     @PutMapping
-    public ResponseEntity<CustomApiResponse<Void>> addStock(@RequestBody StockVerificationRequest stockVerificationRequest){
+    public ResponseEntity<CustomApiResponse<Void>> addSupply(@RequestBody StockVerificationRequest stockVerificationRequest) {
 
         stockServicePort.addStock(stockVerificationRequest.getArticleId(), stockVerificationRequest.getQuantity());
         CustomApiResponse<Void> response = new CustomApiResponse<>(
@@ -76,9 +77,24 @@ public class StockRestController {
                     content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
                             schema = @Schema(implementation = CustomErrorResponse.class)))
     })
+
     @PostMapping
-    public ResponseEntity<StockVerificationResponse> verifyStock(@RequestBody StockVerificationRequest stockVerificationRequest){
+    public ResponseEntity<StockVerificationResponse> verifyStock(@RequestBody StockVerificationRequest stockVerificationRequest) {
         StockVerificationResponse response = stockServicePort.checkStockAvailability(stockVerificationRequest);
         return ResponseEntity.ok().body(response);
+    }
+
+
+    @PostMapping("/listCart")
+    public ResponseEntity<PageArticlesCartResponse<ArticleCart>> listedCartItems(@RequestBody PageArticlesCartRequest requestDto) {
+        PageArticlesCartResponse<ArticleCart> response = stockServicePort.listArticlesCart(requestDto);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<SaleData> updateStockAndGetSaleData(@RequestBody List<CartItem> cartItems){
+        SaleData saleData = stockServicePort.updateStockAndGetSaleData(cartItems);
+        return ResponseEntity.ok().body(saleData);
+
     }
 }

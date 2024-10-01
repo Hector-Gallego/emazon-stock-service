@@ -14,12 +14,12 @@ import java.util.Set;
 @Getter
 public class ArticleResponseDto {
 
-    private Long id;
-    private String name;
-    private String description;
-    private Integer quantity;
-    private Double price;
-    private Set<CategoryListResponseDto> categories;
-    private Brand brand;
+        private Long id;
+        private String name;
+        private String description;
+        private Integer quantity;
+        private Double price;
+        private Set<CategoryListResponseDto> categories;
+        private Brand brand;
 
 }

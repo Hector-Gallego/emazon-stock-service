@@ -7,6 +7,7 @@ import com.emazon.emazonstockservice.ports.driven.mysql.mapper.ArticleEntityMapp
 import org.springframework.data.domain.Page;
 
 public class ArticlePageMapper {
+
     private final ArticleEntityMapper articleEntityMapper;
     public ArticlePageMapper(ArticleEntityMapper articleEntityMapper) {
         this.articleEntityMapper = articleEntityMapper;

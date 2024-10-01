@@ -40,6 +40,10 @@ public final class ErrorMessagesConstants {
     public static final String INVALID_FIELDS = "One or more fields are invalid";
     public static final String ARTICLE_NOT_FOUND_ERROR_MESSAGE = "Article %d not found.";
 
+    public static final String INSUFFICIENT_STOCK_ERROR_MESSAGE= "No hay suficiente stock para el artículo con ID %d. Disponible: %d, Requerido: %d";
+
+
+
 
     public static String getDuplicateNameFieldMessage( String field, String name) {
         return String.format("A %s with the name '%s' already exists.", field, name);
