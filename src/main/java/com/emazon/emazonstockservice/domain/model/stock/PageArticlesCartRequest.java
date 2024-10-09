@@ -5,6 +5,7 @@ import java.util.List;
 
 public class PageArticlesCartRequest {
 
+    List<CartItem> articlesCart;
     private Integer pageNumber;
     private Integer pageSize;
     private String sortOrder;
@@ -14,13 +15,21 @@ public class PageArticlesCartRequest {
     public PageArticlesCartRequest() {
     }
 
-    public PageArticlesCartRequest(Integer pageNumber, Integer pageSize, String sortOrder, String categoryNameFilter, String brandNameFilter) {
-
+    public PageArticlesCartRequest(List<CartItem> articlesCart, Integer pageNumber, Integer pageSize, String sortOrder, String categoryNameFilter, String brandNameFilter) {
+        this.articlesCart = articlesCart;
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
         this.sortOrder = sortOrder;
         this.categoryNameFilter = categoryNameFilter;
         this.brandNameFilter = brandNameFilter;
+    }
+
+    public List<CartItem> getArticlesCart() {
+        return articlesCart;
+    }
+
+    public void setArticlesCart(List<CartItem> articlesCart) {
+        this.articlesCart = articlesCart;
     }
 
     public Integer getPageNumber() {

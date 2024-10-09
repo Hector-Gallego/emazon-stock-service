@@ -6,7 +6,6 @@ import com.emazon.emazonstockservice.domain.exceptions.InsufficientStockExceptio
 import com.emazon.emazonstockservice.domain.model.*;
 import com.emazon.emazonstockservice.domain.model.stock.*;
 import com.emazon.emazonstockservice.domain.ports.api.StockServicePort;
-import com.emazon.emazonstockservice.domain.ports.feign.ShoppingCartFeignServicePort;
 import com.emazon.emazonstockservice.domain.ports.spi.ArticlePersistencePort;
 import com.emazon.emazonstockservice.domain.ports.spi.StockPersistencePort;
 import com.emazon.emazonstockservice.domain.util.CustomPage;
@@ -24,13 +23,12 @@ public class StockUseCase implements StockServicePort {
     private final StockPersistencePort stockPersistencePort;
     private final ArticlePersistencePort articlePersistencePort;
     private final StockValidator stockValidator;
-    private final ShoppingCartFeignServicePort shoppingCartFeignServicePort;
 
-    public StockUseCase(StockPersistencePort stockPersistencePort, ArticlePersistencePort articlePersistencePort, StockValidator stockValidator, ShoppingCartFeignServicePort shoppingCartFeignServicePort) {
+
+    public StockUseCase(StockPersistencePort stockPersistencePort, ArticlePersistencePort articlePersistencePort, StockValidator stockValidator) {
         this.stockPersistencePort = stockPersistencePort;
         this.articlePersistencePort = articlePersistencePort;
         this.stockValidator = stockValidator;
-        this.shoppingCartFeignServicePort = shoppingCartFeignServicePort;
     }
 
     @Override
@@ -54,7 +52,7 @@ public class StockUseCase implements StockServicePort {
     @Override
     public PageArticlesCartResponse<ArticleCart> listArticlesCart(PageArticlesCartRequest pageArticlesCartRequest) {
 
-        List<CartItem> articlesCart = shoppingCartFeignServicePort.getArticlesShoppingCart();
+        List<CartItem> articlesCart = pageArticlesCartRequest.getArticlesCart();
 
         CustomPage<ArticleCart> customPageCart = stockPersistencePort.getPageArticlesCart(pageArticlesCartRequest, articlesCart);
         BigDecimal totalPurchase = calculateTotalPurchase(articlesCart);

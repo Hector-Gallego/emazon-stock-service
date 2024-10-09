@@ -13,6 +13,9 @@ public class CustomPage<T> {
     private Boolean first;
     private Boolean last;
 
+    public CustomPage() {
+    }
+
     private CustomPage(Builder<T> builder) {
         this.content = builder.content;
         this.pageNumber = builder.pageNumber;
@@ -113,6 +116,42 @@ public class CustomPage<T> {
     @Override
     public int hashCode() {
         return Objects.hash(content, pageNumber, pageSize, totalElements, totalPages, first, last);
+    }
+
+    public Boolean getLast() {
+        return last;
+    }
+
+    public void setLast(Boolean last) {
+        this.last = last;
+    }
+
+    public Boolean getFirst() {
+        return first;
+    }
+
+    public void setFirst(Boolean first) {
+        this.first = first;
+    }
+
+    public void setTotalPages(Integer totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    public void setTotalElements(Long totalElements) {
+        this.totalElements = totalElements;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public void setPageNumber(Integer pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    public void setContent(List<T> content) {
+        this.content = content;
     }
 }
 

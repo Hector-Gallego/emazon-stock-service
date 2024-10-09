@@ -5,7 +5,6 @@ import com.emazon.emazonstockservice.domain.ports.api.ArticleServicePort;
 import com.emazon.emazonstockservice.domain.ports.api.BrandServicePort;
 import com.emazon.emazonstockservice.domain.ports.api.CategoryServicePort;
 import com.emazon.emazonstockservice.domain.ports.api.StockServicePort;
-import com.emazon.emazonstockservice.domain.ports.feign.ShoppingCartFeignServicePort;
 import com.emazon.emazonstockservice.domain.ports.spi.ArticlePersistencePort;
 import com.emazon.emazonstockservice.domain.ports.spi.BrandPersistencePort;
 import com.emazon.emazonstockservice.domain.ports.spi.CategoryPersistencePort;
@@ -15,16 +14,14 @@ import com.emazon.emazonstockservice.domain.usecase.BrandUseCase;
 import com.emazon.emazonstockservice.domain.usecase.CategoryUseCase;
 import com.emazon.emazonstockservice.domain.usecase.StockUseCase;
 import com.emazon.emazonstockservice.domain.validator.StockValidator;
-import com.emazon.emazonstockservice.ports.driven.feign.adapters.ShoppingCartFeignServiceClientAdapter;
-import com.emazon.emazonstockservice.ports.driven.feign.clientsinterfaces.ShoppingCartFeignClient;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.ArticleJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.BrandJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.CategoryJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mysql.adapter.StockJpaAdapter;
 import com.emazon.emazonstockservice.ports.driven.mysql.mapper.ArticleCartEntityMapper;
+import com.emazon.emazonstockservice.ports.driven.mysql.mapper.ArticleEntityMapper;
 import com.emazon.emazonstockservice.ports.driven.mysql.mapper.BrandEntityMapper;
 import com.emazon.emazonstockservice.ports.driven.mysql.mapper.CategoryEntityMapper;
-import com.emazon.emazonstockservice.ports.driven.mysql.mapper.ArticleEntityMapper;
 import com.emazon.emazonstockservice.ports.driven.mysql.repository.IArticleRepository;
 import com.emazon.emazonstockservice.ports.driven.mysql.repository.IBrandRepository;
 import com.emazon.emazonstockservice.ports.driven.mysql.repository.ICategoryRepository;
@@ -82,9 +79,8 @@ public class BeanConfiguration {
     @Bean
     StockServicePort stockServicePort(StockPersistencePort stockPersistencePort,
                                       ArticlePersistencePort articlePersistencePort,
-                                      StockValidator stockValidator,
-                                      ShoppingCartFeignServicePort shoppingCartFeignServicePort) {
-        return new StockUseCase(stockPersistencePort, articlePersistencePort, stockValidator, shoppingCartFeignServicePort);
+                                      StockValidator stockValidator) {
+        return new StockUseCase(stockPersistencePort, articlePersistencePort, stockValidator);
     }
 
     @Bean
@@ -99,9 +95,5 @@ public class BeanConfiguration {
         return new StockValidator(stockPersistencePort, articlePersistencePort);
     }
 
-    @Bean
-    ShoppingCartFeignServicePort shoppingCartFeignServicePort(ShoppingCartFeignClient shoppingCartFeignClient) {
-        return new ShoppingCartFeignServiceClientAdapter(shoppingCartFeignClient);
-    }
 
 }
