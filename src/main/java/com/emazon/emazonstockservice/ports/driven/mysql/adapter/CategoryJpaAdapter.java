@@ -63,5 +63,13 @@ public class CategoryJpaAdapter implements CategoryPersistencePort {
 
     }
 
+    @Override
+    public List<Category> getAllCategories() {
+        return  categoryRepository.findAll()
+                .stream()
+                .map(categoryEntityMapper::toDomain)
+                .toList();
+    }
+
 
 }

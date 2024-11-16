@@ -13,4 +13,5 @@ public interface CategoryPersistencePort {
     void saveCategory(Category category);
     boolean existsByName(String name);
     CustomPage<Category> findAll(Integer pageNumber, Integer pageSize, String sortBy, String sortDirection);
+    List<Category> getAllCategories();
 }

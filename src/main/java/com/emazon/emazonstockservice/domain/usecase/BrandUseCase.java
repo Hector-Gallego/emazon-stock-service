@@ -11,6 +11,8 @@ import com.emazon.emazonstockservice.domain.util.*;
 import com.emazon.emazonstockservice.domain.validator.FieldValidator;
 import com.emazon.emazonstockservice.domain.validator.PaginationValidator;
 
+import java.util.List;
+
 public class BrandUseCase implements BrandServicePort {
 
 
@@ -31,7 +33,7 @@ public class BrandUseCase implements BrandServicePort {
         );
 
         if (brandPersistencePort.existsByName(brand.getName())) {
-            throw new DuplicateNameException(ErrorMessagesConstants.getDuplicateNameFieldMessage(ModelNamesConstants.BRAND.toString(), brand.getName()));
+            throw new DuplicateNameException(ErrorMessagesConstants.getDuplicateNameFieldMessage(ModelNamesConstants.BRAND.getSpanishName(), brand.getName()));
         }
 
         brandPersistencePort.saveBrand(brand);
@@ -44,5 +46,10 @@ public class BrandUseCase implements BrandServicePort {
         PaginationValidator.validatePaginationParameters(pageNo,pageSize,sortDirection,sortBy);
         return  brandPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection);
 
+    }
+
+    @Override
+    public List<Brand> getAllBrands() {
+        return brandPersistencePort.getAllBrands();
     }
 }

@@ -2,6 +2,8 @@ package com.emazon.emazonstockservice.ports.driving.rest.controller;
 
 import com.emazon.emazonstockservice.configuration.exception.execptionhandle.CustomErrorResponse;
 import com.emazon.emazonstockservice.configuration.openapi.constants.OpenApiBrandConstants;
+import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
+import com.emazon.emazonstockservice.domain.model.Category;
 import com.emazon.emazonstockservice.domain.ports.api.BrandServicePort;
 import com.emazon.emazonstockservice.domain.model.Brand;
 import com.emazon.emazonstockservice.domain.constants.BrandConstants;
@@ -26,7 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-
+import java.util.List;
 
 
 @RestController
@@ -44,8 +46,6 @@ public class BrandRestController {
         this.brandRequestMapper = brandRequestMapper;
 
     }
-
-
 
 
     @Operation(summary = OpenApiBrandConstants.OPENAPI_CREATE_BRAND_SUMMARY,
@@ -66,7 +66,7 @@ public class BrandRestController {
                             schema = @Schema(implementation = CustomErrorResponse.class)))
     })
     @PostMapping
-    public ResponseEntity<CustomApiResponse<Void>> saveBrand(@Validated @RequestBody BrandRequestDto brandRequestDto){
+    public ResponseEntity<CustomApiResponse<Void>> saveBrand(@Validated @RequestBody BrandRequestDto brandRequestDto) {
 
         Brand brand = brandRequestMapper.toDomain(brandRequestDto);
         brandServicePort.saveBrand(brand);
@@ -80,8 +80,6 @@ public class BrandRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
-
-
 
 
     @Operation(summary = OpenApiBrandConstants.OPENAPI_SUMMARY_LIST_BRANDS,
@@ -130,7 +128,35 @@ public class BrandRestController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @Operation(summary = OpenApiBrandConstants.OPENAPI_SUMMARY_LIST_BRANDS,
+            description = OpenApiBrandConstants.OPENAPI_DESCRIPTION_LIST_BRANDS)
+    @ApiResponses(value = {
 
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
+                    description = OpenApiBrandConstants.OPEN_API_LIST_BRANDS_SUCCESS),
 
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class))),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class)))
+    })
+    @GetMapping("/all")
+    public ResponseEntity<CustomApiResponse<List<Brand>>> getAllBrands() {
+
+        List<Brand> categoriesList = brandServicePort.getAllBrands();
+        CustomApiResponse<List<Brand>> response = new CustomApiResponse<>(
+                HttpStatus.OK.value(),
+                BrandConstants.BRANDS_RETRIEVED_SUCCESSFULLY,
+                categoriesList,
+                LocalDateTime.now()
+
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
 }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Optional;
 
 public class BrandJpaAdapter implements BrandPersistencePort {
@@ -52,5 +53,13 @@ public class BrandJpaAdapter implements BrandPersistencePort {
         return  brandPageMapper.toCustomPage(page);
 
 
+    }
+
+    @Override
+    public List<Brand> getAllBrands() {
+        return brandRepository.findAll()
+                .stream()
+                .map(brandEntityMapper::toDomain)
+                .toList();
     }
 }

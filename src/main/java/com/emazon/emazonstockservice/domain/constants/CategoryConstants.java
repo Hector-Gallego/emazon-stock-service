@@ -9,13 +9,12 @@ public final class CategoryConstants {
 
     public static final int MAX_CATEGORY_NAME_LENGTH = 50;
     public static final int MAX_CATEGORY_DESCRIPTION_LENGTH = 90;
-    public static final String CATEGORY_NOT_FOUND = "The category with ID %d was not found in the system.";
+    public static final String CATEGORY_NOT_FOUND = "La categoría con ID %d no fue encontrada en el sistema.";
 
-    public static final String CATEGORY_CREATED_SUCCESSFULLY = "Category created successfully";
-    public static final String  CATEGORIES_RETRIEVED_SUCCESSFULLY ="Categories retrieved successfully";
-    public static final String CATEGORY_IDS_CANNOT_BE_NULL = "Category IDs cannot be null";
-    public static final String CATEGORY_IDS_CANNOT_BE_EMPTY = "Category IDs cannot be empty";
-    public static final String MAX_CATEGORY_DESCRIPTION_LENGTH_MESSAGE = "Description cannot exceed 90 characters.";
-    public static final String MAX_CATEGORY_NAME_LENGTH_MESSAGE = "Name cannot exceed 50 characters.";
-
+    public static final String CATEGORY_CREATED_SUCCESSFULLY = "Categoría creada con éxito";
+    public static final String CATEGORIES_RETRIEVED_SUCCESSFULLY = "Categorías recuperadas con éxito";
+    public static final String CATEGORY_IDS_CANNOT_BE_NULL = "Los IDs de las categorías no pueden ser nulos";
+    public static final String CATEGORY_IDS_CANNOT_BE_EMPTY = "Los IDs de las categorías no pueden estar vacíos";
+    public static final String MAX_CATEGORY_DESCRIPTION_LENGTH_MESSAGE = "La descripción no puede exceder 90 caracteres.";
+    public static final String MAX_CATEGORY_NAME_LENGTH_MESSAGE = "El nombre no puede exceder 50 caracteres.";
 }

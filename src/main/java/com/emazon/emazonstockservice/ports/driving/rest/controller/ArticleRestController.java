@@ -129,4 +129,37 @@ public class ArticleRestController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+
+    @Operation(summary = OpenApiArticleConstants.OPENAPI_SUMMARY_GET_ARTICLE_BY_ID,
+            description = OpenApiArticleConstants.OPENAPI_DESCRIPTION_GET_ARTICLE_BY_ID)
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
+                    description = OpenApiArticleConstants.OPEN_API_ARTICLE_SUCCESS),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class))),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class)))
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomApiResponse<Article>> getArticleById(@PathVariable Long id){
+
+        Article article = articleServicePort.getArticleById(id);
+
+        CustomApiResponse<Article> response = new CustomApiResponse<>(
+                HttpStatus.OK.value(),
+                ArticleConstants.ARTICLES_RETRIEVED_SUCCESSFULLY,
+                article,
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 }

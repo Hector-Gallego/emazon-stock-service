@@ -6,15 +6,17 @@ public class ItemSaleData {
     private String articleName;
     private Integer articleQuantity;
     private String articleDescription;
+    private Double articlePrice;
 
     public ItemSaleData() {
     }
 
-    public ItemSaleData(Long articleId, String articleName, Integer articleQuantity, String articleDescription) {
+    public ItemSaleData(Long articleId, String articleName, Integer articleQuantity, String articleDescription, Double articlePrice) {
         this.articleId = articleId;
         this.articleName = articleName;
         this.articleQuantity = articleQuantity;
         this.articleDescription = articleDescription;
+        this.articlePrice = articlePrice;
     }
 
     public Long getArticleId() {
@@ -47,5 +49,13 @@ public class ItemSaleData {
 
     public void setArticleDescription(String articleDescription) {
         this.articleDescription = articleDescription;
+    }
+
+    public Double getArticlePrice() {
+        return articlePrice;
+    }
+
+    public void setArticlePrice(Double articlePrice) {
+        this.articlePrice = articlePrice;
     }
 }

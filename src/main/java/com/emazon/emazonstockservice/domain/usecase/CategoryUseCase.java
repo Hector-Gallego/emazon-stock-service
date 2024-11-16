@@ -11,6 +11,7 @@ import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
 import com.emazon.emazonstockservice.domain.validator.FieldValidator;
 import com.emazon.emazonstockservice.domain.validator.PaginationValidator;
 
+import java.util.List;
 
 
 public class CategoryUseCase implements CategoryServicePort {
@@ -35,7 +36,7 @@ public class CategoryUseCase implements CategoryServicePort {
         );
 
         if (categoryPersistencePort.existsByName(category.getName())) {
-            throw new DuplicateNameException(ErrorMessagesConstants.getDuplicateNameFieldMessage(ModelNamesConstants.CATEGORY.toString(),category.getName()));
+            throw new DuplicateNameException(ErrorMessagesConstants.getDuplicateNameFieldMessage(ModelNamesConstants.CATEGORY.getSpanishName(),category.getName()));
         }
 
         categoryPersistencePort.saveCategory(category);
@@ -47,6 +48,11 @@ public class CategoryUseCase implements CategoryServicePort {
 
         PaginationValidator.validatePaginationParameters(pageNo, pageSize,sortDirection, sortBy);
         return  categoryPersistencePort.findAll(pageNo, pageSize, sortBy, sortDirection);
+    }
+
+    @Override
+    public List<Category> getAllCategories() {
+        return categoryPersistencePort.getAllCategories();
     }
 
 

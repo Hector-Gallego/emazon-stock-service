@@ -60,8 +60,8 @@ public class StockRestController {
 
     }
 
-    @Operation(summary = OpenApiStockConstants.OPENAPI_UPDATE_STOCK_SUMMARY,
-            description = OpenApiStockConstants.OPENAPI_UPDATE_STOCK_DESCRIPTION)
+    @Operation(summary = OpenApiStockConstants.OPENAPI_VERIFY_STOCK_SUMMARY,
+            description = OpenApiStockConstants.OPENAPI_VERIFY_STOCK_DESCRIPTION)
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
@@ -85,14 +85,48 @@ public class StockRestController {
     }
 
 
+    @Operation(summary = OpenApiStockConstants.OPENAPI_LIST_CART_SUMMARY,
+            description = OpenApiStockConstants.OPENAPI_LIST_CART_DESCRIPTION)
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
+                    description = OpenApiStockConstants.LIST_CART_COMPLETED,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = StockVerificationResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class)))
+    })
     @PostMapping("/listCart")
     public ResponseEntity<PageArticlesCartResponse<ArticleCart>> listedCartItems(@RequestBody PageArticlesCartRequest requestDto) {
         PageArticlesCartResponse<ArticleCart> response = stockServicePort.listArticlesCart(requestDto);
         return ResponseEntity.ok().body(response);
     }
 
+    @Operation(summary = OpenApiStockConstants.OPENAPI_UPDATE_STOCK_SUMMARY,
+            description = OpenApiStockConstants.OPENAPI_UPDATE_STOCK_DESCRIPTION)
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
+                    description = OpenApiStockConstants.STOCK_VERIFICATION_COMPLETED,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = StockVerificationResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class)))
+    })
     @PostMapping("/update")
-    public ResponseEntity<SaleData> updateStockAndGetSaleData(@RequestBody List<CartItem> cartItems){
+    public ResponseEntity<SaleData> updateStockAndGetSaleData(@RequestBody List<CartItem> cartItems) {
         SaleData saleData = stockServicePort.updateStockAndGetSaleData(cartItems);
         return ResponseEntity.ok().body(saleData);
 

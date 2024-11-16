@@ -12,13 +12,13 @@ public final class ArticleConstants {
         QUANTITY,
         PRICE
     }
-    public static final String  ARTICLES_RETRIEVED_SUCCESSFULLY ="Articles retrieved successfully";
+    public static final String ARTICLES_RETRIEVED_SUCCESSFULLY = "Artículos recuperados con éxito";
 
-    public static final String ARTICLE_CREATED_SUCCESSFULLY = "Article created successfully";
+    public static final String ARTICLE_CREATED_SUCCESSFULLY = "Artículo creado de manera exitosa";
 
-    public static final String VALUE_CANNOT_BE_NEGATIVE = "The %s price cannot be less than 0.";
-    public static final String CATEGORY_COUNT_OUT_OF_RANGE = "The number of categories associated with the article is not within the allowed range (min: 1, max: 3).";
-    public static final String ARTICLE_CANNOT_HAVE_DUPLICATE_CATEGORIES = "The article cannot have duplicate categories.";
-    public static final String VALUE_BRAND_ID_CANNOT_BE_NEGATIVE = "The brand ID must be a non-negative value.";
-    public static final String STOCK_ADDED_SUCCESS = "Stock added successfully";
-}
+    public static final String ARTICLE_NOT_FOUND = "EL artículo con ID %d no fue encontrado en el sistema.";
+    public static final String VALUE_CANNOT_BE_NEGATIVE = "El precio del %s no puede ser menor que 0.";
+    public static final String CATEGORY_COUNT_OUT_OF_RANGE = "El número de categorías asociadas al artículo no está dentro del rango permitido (mínimo: 1, máximo: 3).";
+    public static final String ARTICLE_CANNOT_HAVE_DUPLICATE_CATEGORIES = "El artículo no puede tener categorías duplicadas.";
+    public static final String VALUE_BRAND_ID_CANNOT_BE_NEGATIVE = "El ID de la marca debe ser un valor no negativo.";
+    public static final String STOCK_ADDED_SUCCESS = "Stock añadido con éxito";}

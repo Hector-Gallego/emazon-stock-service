@@ -28,6 +28,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @RestController
@@ -122,6 +123,39 @@ public class CategoryRestController {
                 categoryList,
                 LocalDateTime.now()
         );
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Operation(summary = OpenApiArticleConstants.OPENAPI_SUMMARY_LIST_CATEGORIES,
+            description = OpenApiArticleConstants.OPENAPI_DESCRIPTION_LIST_CATEGORIES)
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
+                    description = OpenApiCategoryConstants.OPEN_API_LIST_CATEGORIES_SUCCESS),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class))),
+
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class)))
+    })
+    @GetMapping("/all")
+    public ResponseEntity<CustomApiResponse<List<Category>>> getAllCategories() {
+
+        List<Category> categoriesList = categoryServicePort.getAllCategories();
+
+        CustomApiResponse<List<Category>> response = new CustomApiResponse<>(
+                HttpStatus.OK.value(),
+                CategoryConstants.CATEGORIES_RETRIEVED_SUCCESSFULLY,
+                categoriesList,
+                LocalDateTime.now()
+
+        );
+
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

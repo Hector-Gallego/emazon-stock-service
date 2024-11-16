@@ -1,11 +1,8 @@
 package com.emazon.emazonstockservice.domain.usecase;
 
+import com.emazon.emazonstockservice.domain.constants.*;
 import com.emazon.emazonstockservice.domain.model.*;
 import com.emazon.emazonstockservice.domain.ports.api.ArticleServicePort;
-import com.emazon.emazonstockservice.domain.constants.BrandConstants;
-import com.emazon.emazonstockservice.domain.constants.CategoryConstants;
-import com.emazon.emazonstockservice.domain.constants.ErrorMessagesConstants;
-import com.emazon.emazonstockservice.domain.constants.ModelNamesConstants;
 import com.emazon.emazonstockservice.domain.exceptions.DataNotFoundException;
 import com.emazon.emazonstockservice.domain.exceptions.DuplicateNameException;
 import com.emazon.emazonstockservice.domain.ports.spi.ArticlePersistencePort;
@@ -39,7 +36,7 @@ public class ArticleUseCase implements ArticleServicePort {
         ArticleValidator.validateArticleFields(article, categoryIds, branId);
 
         if (articlePersistencePort.existByName(article.getName())) {
-            throw new DuplicateNameException(ErrorMessagesConstants.getDuplicateNameFieldMessage(ModelNamesConstants.ARTICLE.toString(), article.getName()));
+            throw new DuplicateNameException(ErrorMessagesConstants.getDuplicateNameFieldArticleMessage(ModelNamesConstants.ARTICLE.getSpanishName(), article.getName()));
         }
 
         Brand brand = brandPersistencePort.findBrandById(branId).orElseThrow(()->
@@ -67,6 +64,12 @@ public class ArticleUseCase implements ArticleServicePort {
         return articlePersistencePort.findAll(pageNumber, pageSize, sortBy, sortDirection);
     }
 
+    @Override
+    public Article getArticleById(Long id) {
+        return articlePersistencePort.findArticleById(id).orElseThrow(
+                () -> new DataNotFoundException(String.format(ArticleConstants.ARTICLE_NOT_FOUND, id))
+        );
+    }
 
 
 }

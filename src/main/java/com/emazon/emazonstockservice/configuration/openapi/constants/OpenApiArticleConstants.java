@@ -16,6 +16,10 @@ public class OpenApiArticleConstants {
     public static final String OPENAPI_DESCRIPTION_LIST_ARTICLES = "Retrieves a list of categories based on the provided parameters.";
     public static final String OPEN_API_LIST_ARTICLES_SUCCESS = "Successfully retrieved articles";
 
+    public static final String OPENAPI_SUMMARY_GET_ARTICLE_BY_ID= "Get Article by ID";
+    public static final String OPENAPI_DESCRIPTION_GET_ARTICLE_BY_ID = "Retrieve a article based on the id parameter.";
+    public static final String OPEN_API_ARTICLE_SUCCESS = "Successfully retrieved article";
+
 
 
     public static final  String SORT_BY_BRAND_NAME = "brand_name";

@@ -75,7 +75,10 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET,
                                 ApiEndPointsConstants.API_CATEGORY_URI,
+                                ApiEndPointsConstants.API_ALL_CATEGORY_URI,
                                 ApiEndPointsConstants.API_BRAND_URI,
+                                ApiEndPointsConstants.API_ALL_BRAND_URI,
+                                ApiEndPointsConstants.API_ARTICLE_BY_ID_URI,
                                 ApiEndPointsConstants.API_ARTICLE_URI)
                         .hasAnyAuthority(
                                 RoleNameConstants.ADMIN,

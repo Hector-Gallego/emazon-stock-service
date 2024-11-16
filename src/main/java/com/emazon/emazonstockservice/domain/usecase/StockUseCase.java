@@ -53,10 +53,18 @@ public class StockUseCase implements StockServicePort {
     public PageArticlesCartResponse<ArticleCart> listArticlesCart(PageArticlesCartRequest pageArticlesCartRequest) {
 
         List<CartItem> articlesCart = pageArticlesCartRequest.getArticlesCart();
-
         CustomPage<ArticleCart> customPageCart = stockPersistencePort.getPageArticlesCart(pageArticlesCartRequest, articlesCart);
         BigDecimal totalPurchase = calculateTotalPurchase(articlesCart);
+
         CustomPage<ArticleCart> verifiedStockPage = evaluateStockAndSetStatus(customPageCart, articlesCart);
+
+        verifiedStockPage.getContent().forEach(articleCart -> {
+            articlesCart.stream()
+                    .filter(cartItem -> cartItem.getArticleId().equals(articleCart.getId()))
+                    .findFirst()
+                    .ifPresent(cartItem -> articleCart.setQuantity(cartItem.getQuantity()));
+        });
+
 
         return new PageArticlesCartResponse<>(verifiedStockPage, totalPurchase);
     }
@@ -125,27 +133,34 @@ public class StockUseCase implements StockServicePort {
                         articleId, availableStockOpt.orElse(0), requestedQuantity));
             }
         }
-
         stockPersistencePort.updateStock(cartItemList);
-
         List<Long> idsCart = getIdsCart(cartItemList);
         List<Article> articleList = stockPersistencePort.getTotalArticlesCart(idsCart);
-
         List<ItemSaleData> itemSaleDataList = articleList
                 .stream()
-                .map(article  -> new ItemSaleData(
-                        article.getId(),
-                        article.getName(),
-                        article.getQuantity(),
-                        article.getDescription()
-                )).toList();
+                .map(article -> {
+
+                    Integer requestedQuantity = cartItemList.stream()
+                            .filter(cartItem -> cartItem.getArticleId().equals(article.getId()))
+                            .findFirst()
+                            .map(CartItem::getQuantity)
+                            .orElse(0);
+
+                    return new ItemSaleData(
+                            article.getId(),
+                            article.getName(),
+                            requestedQuantity,
+                            article.getDescription(),
+                            article.getPrice()
+                    );
+                })
+                .toList();
 
         SaleData saleData = new SaleData();
         saleData.setTotalPurchase(calculateTotalPurchase(cartItemList));
         saleData.setItemsSaleData(itemSaleDataList);
 
         return saleData;
-
     }
 
     private List<Long> getIdsCart(List<CartItem> cartItemList){
