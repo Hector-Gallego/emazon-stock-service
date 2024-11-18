@@ -131,4 +131,28 @@ public class StockRestController {
         return ResponseEntity.ok().body(saleData);
 
     }
+
+    @Operation(summary = OpenApiStockConstants.OPENAPI_UPDATE_STOCK_SUMMARY,
+            description = OpenApiStockConstants.OPENAPI_UPDATE_STOCK_DESCRIPTION)
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_200,
+                    description = OpenApiStockConstants.STOCK_VERIFICATION_COMPLETED,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = StockVerificationResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_400,
+                    description = OpenApiConstants.INVALID_INPUT,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class))),
+            @ApiResponse(responseCode = OpenApiConstants.OPENAPI_CODE_500,
+                    description = OpenApiConstants.OPENAPI_INTERNAL_SERVER_ERROR,
+                    content = @Content(mediaType = OpenApiConstants.OPENAPI_MEDIA_TYPE_JSON,
+                            schema = @Schema(implementation = CustomErrorResponse.class)))
+    })
+    @PostMapping("/updateCompensation")
+    public ResponseEntity<Void> updateStockCompensation(@RequestBody List<CartItem> cartItems) {
+        stockServicePort.updateStockCompensation(cartItems);
+        return ResponseEntity.ok().build();
+
+    }
 }

@@ -9,4 +9,5 @@ public interface StockServicePort {
     StockVerificationResponse checkStockAvailability(StockVerificationRequest stockVerificationRequest);
     PageArticlesCartResponse<ArticleCart> listArticlesCart(PageArticlesCartRequest pageArticlesCartRequest);
     SaleData updateStockAndGetSaleData(List<CartItem> cartItemList);
+    void updateStockCompensation(List<CartItem> cartItemList);
 }

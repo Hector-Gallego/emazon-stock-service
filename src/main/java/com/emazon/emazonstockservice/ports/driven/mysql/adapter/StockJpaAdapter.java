@@ -103,5 +103,14 @@ public class StockJpaAdapter implements StockPersistencePort {
 
     }
 
+    @Override
+    public void compensateStock(List<CartItem> cartItems) {
+        for (CartItem cartItem : cartItems) {
+            Long articleId = cartItem.getArticleId();
+            Integer requestedQuantity = cartItem.getQuantity();
+            addStock(articleId, requestedQuantity);
+        }
+    }
+
 
 }

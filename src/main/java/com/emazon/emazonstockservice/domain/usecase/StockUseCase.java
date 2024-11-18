@@ -163,6 +163,11 @@ public class StockUseCase implements StockServicePort {
         return saleData;
     }
 
+    @Override
+    public void updateStockCompensation(List<CartItem> cartItemList) {
+        stockPersistencePort.compensateStock(cartItemList);
+    }
+
     private List<Long> getIdsCart(List<CartItem> cartItemList){
         return  cartItemList.stream().map(CartItem::getArticleId).toList();
     }

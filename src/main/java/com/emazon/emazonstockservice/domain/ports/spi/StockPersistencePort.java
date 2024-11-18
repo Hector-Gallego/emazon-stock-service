@@ -15,6 +15,7 @@ public interface StockPersistencePort {
     CustomPage<ArticleCart> getPageArticlesCart(PageArticlesCartRequest pageArticlesCartRequest, List<CartItem> articleCarts);
     List<Article> getTotalArticlesCart(List<Long> ids);
     void updateStock(List<CartItem> cartItems);
+    void compensateStock(List<CartItem> cartItems);
 
 
 }
